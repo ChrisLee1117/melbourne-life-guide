@@ -1,0 +1,13 @@
+{
+  "name": "melbourne-life-guide",
+  "version": "1.0.0",
+  "description": "墨爾本生活助手 - 自動更新活動及超市特價",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "node-fetch": "^3.3.2"
+  }
+}
