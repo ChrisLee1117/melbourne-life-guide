@@ -87,11 +87,56 @@
     .info-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;text-align:center;margin-top:6px}
     @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+    /* Detail Modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s ease}
+    .modal-overlay.closing{animation:fadeOut 0.2s ease forwards}
+    .modal-sheet{background:linear-gradient(180deg,#1a1035 0%,#0d1b3e 100%);border-radius:24px 24px 0 0;padding:20px 20px 40px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto;animation:slideUp 0.3s ease}
+    .modal-sheet.closing{animation:slideDown 0.25s ease forwards}
+    .modal-handle{width:40px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin:0 auto 18px}
+    .modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:12px}
+    .modal-close{background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:32px;height:32px;color:#94a3b8;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+    .modal-title{font-size:20px;font-weight:900;color:#f1f5f9;line-height:1.2;margin:0}
+    .modal-section{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:14px;margin-bottom:10px}
+    .modal-label{font-size:9px;font-weight:700;letter-spacing:2px;color:#7c3aed;text-transform:uppercase;margin-bottom:6px}
+    .modal-value{font-size:13px;color:#cbd5e1;line-height:1.6}
+    .modal-btn{display:block;width:100%;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:10px;box-sizing:border-box}
+
+    /* Modal Photo */
+    .modal-photo{width:100%;height:180px;object-fit:cover;border-radius:14px;margin-bottom:14px;background:rgba(255,255,255,0.04)}
+    .modal-photo-skeleton{width:100%;height:180px;border-radius:14px;margin-bottom:14px;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    /* Language Toggle */
+    .lang-toggle{position:absolute;top:20px;right:16px;display:flex;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;overflow:hidden}
+    .lang-btn{border:none;background:transparent;color:#64748b;font-size:11px;font-weight:700;padding:5px 10px;cursor:pointer;transition:all 0.2s}
+    .lang-btn.active{background:rgba(124,58,237,0.5);color:#fff}
+
+    /* Language Splash */
+    #langSplash{position:fixed;inset:0;z-index:999;background:linear-gradient(135deg,#0a0a1a 0%,#0d1b3e 50%,#0a0a1a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px}
+    .splash-title{font-size:clamp(28px,8vw,48px);font-weight:900;background:linear-gradient(135deg,#fff 0%,#c4b5fd 50%,#7c3aed 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:8px}
+    .splash-sub{color:#64748b;font-size:14px;text-align:center;margin-bottom:48px}
+    .splash-btn{width:100%;max-width:280px;padding:18px;border:none;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;margin-bottom:14px;transition:transform 0.1s}
+    .splash-btn:active{transform:scale(0.97)}
+    .splash-btn-zh{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff}
+    .splash-btn-en{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15)!important;color:#e2e8f0}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    @keyframes slideDown{from{transform:translateY(0)}to{transform:translateY(100%)}}
   </style>
 </head>
 <body>
 
 <!-- PWA Install Banner -->
+<!-- Language Splash -->
+<div id="langSplash">
+  <div style="font-size:48px;margin-bottom:20px">🇦🇺</div>
+  <div class="splash-title">Melbourne<br/>Life Guide</div>
+  <div class="splash-sub">墨爾本生活助手</div>
+  <button class="splash-btn splash-btn-zh" onclick="chooseLang('zh')">🇭🇰 繁體中文</button>
+  <button class="splash-btn splash-btn-en" onclick="chooseLang('en')">🇦🇺 English</button>
+</div>
+
 <div id="installBanner">
   <div class="install-icon">📱</div>
   <div class="install-text">
@@ -102,7 +147,8 @@
   <button class="close-btn" onclick="dismissInstall()">✕</button>
 </div>
 
-<div class="header">
+<div class="header" style="position:relative">
+  <div class="lang-toggle"><button class="lang-btn active" id="btnZH" onclick="setLang('zh')">中文</button><button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button></div>
   <div style="font-size:11px;letter-spacing:4px;color:#7c3aed;font-weight:700;margin-bottom:5px;text-transform:uppercase">🇦🇺 墨爾本生活助手</div>
   <h1>Melbourne Life Guide</h1>
   <p>自動更新活動 · 超市特價 · 按距離排序</p>
@@ -155,15 +201,194 @@
 const SUBURB_COORDS={"clayton":{lat:-37.9169,lng:145.1225},"cbd":{lat:-37.8136,lng:144.9631},"city":{lat:-37.8136,lng:144.9631},"fitzroy":{lat:-37.7994,lng:144.9786},"richmond":{lat:-37.8239,lng:144.9975},"st kilda":{lat:-37.8672,lng:144.9780},"south yarra":{lat:-37.8395,lng:144.9921},"brunswick":{lat:-37.7693,lng:144.9617},"collingwood":{lat:-37.8039,lng:144.9841},"northcote":{lat:-37.7726,lng:144.9997},"footscray":{lat:-37.8008,lng:144.8994},"williamstown":{lat:-37.8615,lng:144.8991},"dandenong":{lat:-37.9879,lng:145.2150},"frankston":{lat:-38.1440,lng:145.1239},"box hill":{lat:-37.8193,lng:145.1239},"glen waverley":{lat:-37.8785,lng:145.1633},"oakleigh":{lat:-37.8985,lng:145.0942},"keysborough":{lat:-37.9908,lng:145.1792},"noble park":{lat:-37.9679,lng:145.1772},"springvale":{lat:-37.9479,lng:145.1517},"essendon":{lat:-37.7495,lng:144.9213},"hawthorn":{lat:-37.8228,lng:145.0326},"camberwell":{lat:-37.8373,lng:145.0590},"malvern":{lat:-37.8635,lng:145.0287},"carlton":{lat:-37.7988,lng:144.9660},"parkville":{lat:-37.7882,lng:144.9534},"coburg":{lat:-37.7437,lng:144.9659},"spotswood":{lat:-37.8328,lng:144.8889}};
 const SUPERMARKETS=[{name:"Woolworths",emoji:"🟢",color:"#16a34a",tagline:"每週三更新特價",links:[{label:"本週半價特惠",url:"https://www.woolworths.com.au/shop/browse/specials/half-price",icon:"🏷️"},{label:"全部特價商品",url:"https://www.woolworths.com.au/shop/browse/specials",icon:"📋"}]},{name:"Coles",emoji:"🔴",color:"#dc2626",tagline:"每週三更新特價",links:[{label:"本週半價特惠",url:"https://www.coles.com.au/half-price-specials",icon:"🏷️"},{label:"全部特價商品",url:"https://www.coles.com.au/on-special",icon:"📋"}]},{name:"ALDI",emoji:"🔵",color:"#0ea5e9",tagline:"每週三、六推出特賣",links:[{label:"本週 Special Buys",url:"https://www.aldi.com.au/en/special-buys/this-weeks-specials/",icon:"🏷️"},{label:"下週預告",url:"https://www.aldi.com.au/en/special-buys/next-weeks-specials/",icon:"📋"}]},{name:"Chemist Warehouse",emoji:"💊",color:"#f97316",tagline:"藥妝保健最平",links:[{label:"本週半價特惠",url:"https://www.chemistwarehouse.com.au/catalogue",icon:"🏷️"},{label:"全部特價商品",url:"https://www.chemistwarehouse.com.au/sale",icon:"📋"}]}];
 
-let allEvents=[], lastUpdated=null, expandedDay=0, currentWeek=[];
+const LAST_UPDATED="2026年6月1日";
+let allEvents=[
+  {id:101,name:"RISING 冬季藝術節",emoji:"🎭",category:"藝術節",color:"#7c3aed",fixedStart:"2026-05-27",fixedEnd:"2026-06-08",daysOfWeek:[0,1,2,3,4,5,6],hours:"各節目時間不一",location:"全市各地",address:"Flinders Street Station, Melbourne VIC 3000",venueLat:-37.8183,venueLng:144.9671,description:"墨爾本最受矚目的冬季藝術節，105個節目橫跨16天，音樂、舞蹈、裝置藝術遍布全市。",dateDesc:"2026年5月27日至6月8日",highlights:"🎭 南半球最大冬季藝術節，105個節目同時喺全市16個場地上演
+🌟 免費露天表演遍佈Fed Square、Flinders Street等地標
+🎵 深夜場節目特別精彩，建議留到最後
+🗺️ 下載官方 app 規劃行程，唔然會錯過隱藏節目
+💡 平日場人少，週末提早到場搶位",highlightsEn:"🎭 Southern hemisphere's largest winter arts festival with 105 shows across 16 venues
+🌟 Free outdoor performances at Fed Square, Flinders Street and city laneways
+🎵 Late-night shows are the most electric — stay for the full experience
+🗺️ Download the RISING app to plan your schedule across the city
+💡 Weekday sessions are less crowded; arrive early on weekends"},
+  {id:102,name:"Box Hill 端午節香港人市集",emoji:"🥟",category:"市集",color:"#ef4444",fixedStart:"2026-06-06",fixedEnd:"2026-06-06",daysOfWeek:[0,1,2,3,4,5,6],hours:"上午10:30 – 下午7:30",location:"Box Hill Town Hall",address:"1022 Whitehorse Rd, Box Hill VIC 3128",venueLat:-37.8193,venueLng:145.1239,description:"端午節文化市集，匯聚香港街頭美食、特色攤位、舞台表演！一天限定。",dateDesc:"2026年6月6日（週六）一天限定",highlights:"🥟 限定一天！匯聚全墨爾本最正宗港式街頭小食
+🎤 舞台表演包括粵語歌、舞獅，充滿節日氣氛
+🛍️ 特色香港懷舊商品、手作市集值得慢慢逛
+⏰ 建議下午2-4時到場，表演最密集
+🐉 端午節限定糉子！多種口味，賣完即止",highlightsEn:"🥟 One-day only! Most authentic Hong Kong street food in Melbourne
+🎤 Live Cantonese music and lion dance performances on stage
+🛍️ Hong Kong nostalgic goods and handmade craft stalls worth browsing
+⏰ Arrive 2-4pm for the most performances
+🐉 Dragon Boat Festival special zongzi (sticky rice dumplings) — limited stock!"},
+  {id:103,name:"國王生日公眾假期",emoji:"👑",category:"節慶",color:"#f59e0b",fixedStart:"2026-06-08",fixedEnd:"2026-06-08",daysOfWeek:[0,1,2,3,4,5,6],hours:"全天",location:"全墨爾本",address:"Melbourne VIC 3000",venueLat:-37.8136,venueLng:144.9631,description:"維多利亞州公眾假期！大部分商舖及景點維持開放，是出遊好時機。",dateDesc:"2026年6月8日（週一）公眾假期"},
+  {id:104,name:"墨爾本爵士音樂節",emoji:"🎷",category:"音樂",color:"#0ea5e9",fixedStart:"2026-06-06",fixedEnd:"2026-06-15",daysOfWeek:[0,1,2,3,4,5,6],hours:"下午6:00 – 晚上11:00",location:"漢默廳及各場地",address:"100 St Kilda Rd, Melbourne VIC 3004",venueLat:-37.8225,venueLng:144.9690,description:"世界級爵士樂手進駐墨爾本，十天音樂盛宴，部分場次免費。",dateDesc:"2026年6月6至15日",highlights:"🎷 世界頂級爵士樂手齊聚，多個場地同時演出
+🍷 Hamer Hall 主場地有餐飲服務，邊食邊聽一流
+🆓 部分露天場次完全免費，到場即可入座
+🌙 深夜即興 Jam Session 最精彩，音樂家互相較技
+🎟️ 提早網上買票可享早鳥優惠",highlightsEn:"🎷 World-class jazz musicians performing across multiple venues simultaneously
+🍷 Hamer Hall main venue has food and drinks — dine while you listen
+🆓 Some outdoor sessions are completely free, just show up
+🌙 Late-night jam sessions are unmissable — musicians improvise together
+🎟️ Buy tickets online early for discounts"},
+  {id:105,name:"Lightscape 植物園燈光節",emoji:"✨",category:"家庭",color:"#a78bfa",fixedStart:"2026-06-12",fixedEnd:"2026-08-02",daysOfWeek:[3,4,5,6,0],hours:"日落後至晚上10:00",location:"皇家植物園",address:"Birdwood Ave, Melbourne VIC 3004",venueLat:-37.8300,venueLng:144.9800,description:"全新燈光裝置將植物園化為夢幻世界，適合家庭、約會。票價$36起。",dateDesc:"2026年6月12日至8月2日，逢週三至日",highlights:"✨ 超過30個大型燈光裝置將植物園變成夢幻世界
+🌿 沿著1.5公里光影步道漫步，每個轉角都有驚喜
+📸 打卡熱點極多，帶備相機或調好手機夜景模式
+👨‍👩‍👧 適合帶小朋友，全程約1.5小時
+💡 週三人最少，週末需提前訂票",highlightsEn:"✨ Over 30 large-scale light installations transforming the botanic garden
+🌿 Stroll the 1.5km illuminated trail with surprises around every corner
+📸 Incredible photo opportunities — use night mode on your phone
+👨‍👩‍👧 Perfect for families, takes about 1.5 hours to complete
+💡 Wednesday is least crowded; book ahead for weekends"},
+  {id:106,name:"NGV Cartier 珠寶大展",emoji:"💎",category:"展覽",color:"#ec4899",fixedStart:"2026-06-12",fixedEnd:"2026-10-04",daysOfWeek:[0,1,2,3,4,5,6],hours:"上午10:00 – 下午5:00",location:"NGV 國際館",address:"180 St Kilda Rd, Melbourne VIC 3006",venueLat:-37.8227,venueLng:144.9684,description:"澳洲史上最大規模卡地亞珠寶展，近400件傳奇珠寶。票價$38起。",dateDesc:"2026年6月12日至10月4日",highlights:"💎 澳洲史上最大規模卡地亞展，近400件傳奇珠寶原件
+👑 包括王室訂製珠寶、電影明星佩戴過的稀世之寶
+🔍 互動展區可近距離欣賞工藝細節，放大鏡效果
+📱 配合官方導覽 app 體驗增強現實功能
+⏰ 開門後首1小時人最少，建議早上10時入場",highlightsEn:"💎 Largest Cartier exhibition in Australian history with nearly 400 legendary pieces
+👑 Includes royal commissions and pieces worn by Hollywood legends
+🔍 Interactive displays let you appreciate the craftsmanship up close
+📱 Use the official AR guide app for an enhanced experience
+⏰ Least crowded in the first hour — arrive at 10am opening"},
+  {id:107,name:"NGV 周五夜場 × Cartier",emoji:"🥂",category:"展覽",color:"#a855f7",fixedStart:"2026-06-12",fixedEnd:"2026-10-02",daysOfWeek:[5],hours:"下午6:00 – 晚上10:00",location:"NGV 國際館",address:"180 St Kilda Rd, Melbourne VIC 3006",venueLat:-37.8227,venueLng:144.9684,description:"每週五夜場，爵士音樂、法式美食及Moët香檳。票價$41起。",dateDesc:"2026年6月12日至10月2日，逢週五",highlights:"🥂 每週五限定夜場，博物館搖身一變成為高級社交場所
+🎵 現場爵士樂伴奏，氣氛一流
+🍾 Moët香檳、法式小食，感受巴黎式優雅
+👗 著裝比平日正式，許多人會特別打扮出席
+🎟️ 票價含一杯香檳，額外飲品需另付",highlightsEn:"🥂 Friday nights only — the museum transforms into an upscale social venue
+🎵 Live jazz music sets a sophisticated atmosphere
+🍾 Moët champagne and French canapés for a Parisian evening
+👗 Dress up — many attendees make a special occasion of it
+🎟️ Ticket includes one champagne; additional drinks purchased separately"},
+  {id:108,name:"甜甜圈節",emoji:"🍩",category:"美食",color:"#f59e0b",fixedStart:"2026-06-13",fixedEnd:"2026-06-14",daysOfWeek:[0,6],hours:"上午9:00 – 下午4:00",location:"女王市場 C-D Sheds",address:"Queen Victoria Market, Melbourne VIC 3000",venueLat:-37.8076,venueLng:144.9568,description:"週末兩天，各式創意甜甜圈攤位，免費入場。",dateDesc:"2026年6月13至14日（週末）免費",highlights:"🍩 全澳最多甜甜圈品牌齊集，口味天馬行空
+🌈 限定節日口味：抹茶、黑芝麻、麻辣等創意款
+📸 超好打卡的彩色甜甜圈牆，必影！
+⏰ 開門即去，熱門口味通常中午前售罄
+🆓 入場免費，甜甜圈另外購買",highlightsEn:"🍩 Australia's biggest gathering of donut brands with wild and creative flavours
+🌈 Festival-exclusive flavours: matcha, black sesame, and unusual savoury combos
+📸 The colourful donut wall makes for amazing photos — don't miss it
+⏰ Go early — popular flavours sell out before noon
+🆓 Free entry; pay per donut"},
+  {id:109,name:"威廉斯頓文學節",emoji:"📖",category:"文化",color:"#84cc16",fixedStart:"2026-06-12",fixedEnd:"2026-06-14",daysOfWeek:[0,5,6],hours:"上午10:00 – 下午6:00",location:"威廉斯頓市政廳",address:"Williamstown Town Hall, Williamstown VIC 3016",venueLat:-37.8615,venueLng:144.8991,description:"海邊小鎮文學節，慶祝書籍、故事與創意寫作。",dateDesc:"2026年6月12至14日",highlights:"📖 海邊小鎮舉辦的親密文學節，與作家近距離交流機會難得
+✍️ 多場工作坊教你創意寫作、出版技巧，部分免費
+🌊 威廉斯頓海邊散步結合文學節，完美半日遊
+🍽️ 鎮上的海鮮餐廳趁機一試，性價比極高
+🚂 從City坐火車直達，交通方便",highlightsEn:"📖 Intimate literary festival in a seaside town — rare chance for close author encounters
+✍️ Creative writing and publishing workshops available, some free of charge
+🌊 Combine with a walk along Williamstown beach for a perfect half-day trip
+🍽️ The town's seafood restaurants are excellent value — don't miss lunch here
+🚂 Direct train from the city makes it an easy day trip"},
+  {id:110,name:"Fondue Chalet 火鍋小屋",emoji:"🧀",category:"美食",color:"#f97316",fixedStart:"2026-06-01",fixedEnd:"2026-06-28",daysOfWeek:[0,1,2,3,4,5,6],hours:"下午5:00 – 晚上10:00",location:"聯邦廣場",address:"Federation Square, Melbourne VIC 3000",venueLat:-37.8183,venueLng:144.9692,description:"聯邦廣場變身法式阿爾卑斯山村！私人木屋內享用芝士火鍋或拉可雷特。每位$79。",dateDesc:"2026年6月1日至6月28日",highlights:"🧀 私人木屋設計，感覺置身瑞士Alps，聯邦廣場最浪漫體驗
+🫕 芝士火鍋用瑞士Gruyère芝士，拉可雷特即刮即食超過癮
+🍷 配搭精選白酒效果最佳，侍應會推薦配對
+👫 適合約會或慶祝特別場合，建議提早訂座
+🌙 夜晚燈光氣氛更佳，日落後入座最正",highlightsEn:"🧀 Private alpine chalets at Federation Square — Melbourne's most romantic winter spot
+🫕 Swiss Gruyère cheese fondue and freshly scraped raclette are the highlights
+🍷 Ask staff to recommend a wine pairing — the whites are excellent
+👫 Perfect for dates or celebrations; book ahead as it fills up fast
+🌙 Evening sessions after sunset have the best atmosphere and lighting"},
+  {id:111,name:"冬季夜市（逢週三）",emoji:"🌙",category:"市集",color:"#ff6b35",fixedStart:"2026-06-04",fixedEnd:"2026-08-26",daysOfWeek:[3],hours:"下午5:00 – 晚上10:00",location:"維多利亞女王市場",address:"Queen Victoria Market, Melbourne VIC 3000",venueLat:-37.8076,venueLng:144.9568,description:"每逢週三，女王市場變身冬季夜市，美食、音樂、熱酒應有盡有。",dateDesc:"2026年6月至8月，逢週三",highlights:"🌙 每週三限定，女王市場搖身一變成為夜市
+🍜 來自世界各地美食攤位，每週輪換不同攤商
+🎵 現場音樂表演，邊食邊聽氣氛超好
+🍺 熱紅酒Mulled Wine係冬季夜市招牌，必試
+💡 6時開始最旺，8時後人潮退去，慢慢逛最舒服",highlightsEn:"🌙 Every Wednesday only — Queen Victoria Market transforms into a night market
+🍜 Global food stalls rotate weekly so there's always something new
+🎵 Live music performances throughout the evening
+🍺 Mulled wine is the signature winter drink here — a must-try
+💡 Busiest at 6pm; after 8pm the crowds thin out for a more relaxed browse"},
+  {id:112,name:"皇家展覽館隱世導賞",emoji:"🏛️",category:"展覽",color:"#b45309",fixedStart:"2026-06-01",fixedEnd:"2026-06-30",daysOfWeek:[0,1,2,3,4,5,6],hours:"上午10:00 – 下午4:00",location:"皇家展覽館",address:"9 Nicholson St, Carlton VIC 3053",venueLat:-37.8045,venueLng:144.9718,description:"首次開放百年隱藏空間！探索世界遺產建築的神秘角落。成人票$29起。",dateDesc:"2026年6月全月",highlights:"🏛️ 全球僅少數幾座世界遺產建築提供內部導賞，極為罕有
+🔑 開放平時不對外的密室、天台、地下室等隱藏空間
+📜 導賞員講解1880年代維多利亞時代建築秘史
+📸 圓頂內部係最佳拍攝位置，光線在正午最美
+👥 團體人數限制，必須提前預訂",highlightsEn:"🏛️ One of very few World Heritage buildings offering guided access to hidden spaces
+🔑 See secret rooms, rooftop areas and underground spaces not open to the public
+📜 Guides share fascinating stories from the 1880s Victorian era
+📸 The dome interior is the best photo spot — light is best at midday
+👥 Group sizes are limited, so book well in advance"},
+  {id:113,name:"羅馬帝國大展",emoji:"🏺",category:"展覽",color:"#dc2626",fixedStart:"2026-04-01",fixedEnd:"2026-10-25",daysOfWeek:[0,1,2,3,4,5,6],hours:"上午10:00 – 下午5:00",location:"墨爾本博物館",address:"11 Nicholson St, Carlton VIC 3053",venueLat:-37.8030,venueLng:144.9718,description:"超過150件古羅馬文物首次來澳，雕塑、馬賽克、壁畫全部原件展出！",dateDesc:"2026年4月1日至10月25日",highlights:"🏺 超過150件古羅馬文物首次來澳，全部真跡原件非複製品
+⚔️ 包括角鬥士頭盔、皇帝半身像、2000年前馬賽克地板
+🎮 互動體驗區可穿上羅馬戰士裝備拍照
+📖 語音導賞（免費借用）詳細解釋每件文物背景
+⏰ 週二至四人最少，學校假期人流較多",highlightsEn:"🏺 Over 150 authentic Roman artefacts on their Australian debut — all genuine, none replicas
+⚔️ Highlights include a gladiator helmet, emperor busts and 2000-year-old mosaic floors
+🎮 Interactive zone lets you try on Roman soldier equipment for photos
+📖 Free audio guides available — highly recommended for full context
+⏰ Tuesdays to Thursdays are quietest; avoid school holiday periods"},
+  {id:114,name:"冬至節",emoji:"❄️",category:"節慶",color:"#818cf8",fixedStart:"2026-06-20",fixedEnd:"2026-06-20",daysOfWeek:[0,1,2,3,4,5,6],hours:"下午4:00 – 晚上10:00",location:"Coburg 市政廳",address:"90 Bell St, Coburg VIC 3058",venueLat:-37.7437,venueLng:144.9659,description:"一年中最長的黑夜，冥想、燈光藝術與社群聚會迎接冬至。",dateDesc:"2026年6月20日（週六）冬至",highlights:"❄️ 一年中最長的夜晚，社區聚集迎接冬至的古老傳統
+🕯️ 燭光冥想儀式，在黑暗中靜心感受季節轉換
+🎨 燈光藝術裝置將社區廣場化為夢幻空間
+🍵 熱飲和暖食免費提供，社區共享氣氛溫暖
+🌅 活動在日落後開始，深夜12時達到高潮",highlightsEn:"❄️ The year's longest night — an ancient tradition of gathering to mark the winter solstice
+🕯️ Candlelit meditation ceremony to pause and feel the seasonal shift
+🎨 Light art installations transform the community square
+🍵 Free hot drinks and warm food shared by the community
+🌅 Begins at sunset; midnight is the ceremonial highlight"},
+  {id:115,name:"墨爾本魔術節",emoji:"🪄",category:"表演",color:"#06b6d4",fixedStart:"2026-06-29",fixedEnd:"2026-07-11",daysOfWeek:[0,1,2,3,4,5,6],hours:"下午6:00 – 晚上10:00",location:"Carlton 多個場地",address:"Carlton, Melbourne VIC 3053",venueLat:-37.7988,venueLng:144.9660,description:"南半球最大魔術節，舞台表演、街頭魔術令你瞠目結舌。",dateDesc:"2026年6月29日至7月11日",highlights:"🪄 南半球最大魔術節，街頭魔術師隨時隨地表演
+🎩 大型舞台表演讓你懷疑自己的眼睛，近距離魔術最震撼
+👀 互動表演鼓勵觀眾參與，有機會成為魔術助手
+🎪 Carlton街頭整個區域變身魔術嘉年華，免費觀看
+🎟️ 部分室內表演需要購票，建議提前網上預訂",highlightsEn:"🪄 Southern hemisphere's biggest magic festival with street performers everywhere
+🎩 Stage shows that will make you question reality — close-up magic is the most mind-blowing
+👀 Interactive performances — you might be picked as the magician's assistant
+🎪 Carlton streets turn into a free magic carnival throughout the festival
+🎟️ Some indoor shows require tickets — book online in advance"},
+  {id:116,name:"Scienceworks 成人夜場",emoji:"🔭",category:"家庭",color:"#22d3ee",fixedStart:"2026-06-06",fixedEnd:"2026-06-27",daysOfWeek:[5],hours:"下午6:00 – 晚上10:00",location:"Scienceworks 科學館",address:"2 Booker St, Spotswood VIC 3015",venueLat:-37.8328,venueLng:144.8889,description:"成人專屬夜間科學館體驗。票價$25起。",dateDesc:"2026年6月，逢週五晚上",highlights:"🔭 成人專屬！平時帶小朋友去的科學館，夜晚完全不同氣氛
+🍸 有酒精飲品供應，邊玩互動展覽邊社交
+⚡ 閃電劇場夜場版特別震撼，成人限定體驗
+🌌 天象館夜場節目講解宇宙奧秘，躺著看星空
+🎭 每月主題不同，值得多次參加",highlightsEn:"🔭 Adults only! The kids' science museum transforms into something totally different at night
+🍸 Drinks are served — enjoy interactive exhibits in a social atmosphere
+⚡ The Lightning Show is extra spectacular in the evening — adults-only version
+🌌 Planetarium night show explores the universe while you lie back and watch
+🎭 Each month has a different theme, worth attending multiple times"},
+  {id:21,name:"維多利亞州立圖書館",emoji:"📚",category:"展覽",color:"#b45309",months:[0,1,2,3,4,5,6,7,8,9,10,11],dayStart:1,dayEnd:31,daysOfWeek:[0,1,2,3,4,5,6],hours:"上午10:00 – 下午6:00",location:"維多利亞州立圖書館",address:"328 Swanston St, Melbourne VIC 3000",venueLat:-37.8098,venueLng:144.9645,description:"全年免費開放的藝術、文化與歷史展覽。",dateDesc:"全年每天，免費",highlights:"📚 免費入場，La Trobe閱覽室圓頂建築係墨爾本最美室內空間之一
+🎨 定期舉辦免費展覽，涵蓋歷史、藝術、文化各範疇
+☕ 圖書館咖啡廳性價比高，適合工作或休息
+📖 可借閱實體書、雜誌，憑任何地址証明免費辦卡
+🌟 週末人較多，平日早上最安靜舒適",highlightsEn:"📚 Free entry — the La Trobe Reading Room dome is one of Melbourne's most beautiful interiors
+🎨 Regular free exhibitions covering history, art and culture
+☕ The library café is great value — a perfect work or rest stop
+📖 Borrow books and magazines free with any proof of address
+🌟 Quietest on weekday mornings; busier on weekends"},
+  {id:22,name:"維多利亞女王市場",emoji:"🛒",category:"市集",color:"#16a34a",months:[0,1,2,3,4,5,6,7,8,9,10,11],dayStart:1,dayEnd:31,daysOfWeek:[2,4,5,6],hours:"上午6:00 – 下午3:00",location:"維多利亞女王市場",address:"Queen Victoria Market, Melbourne VIC 3000",venueLat:-37.8076,venueLng:144.9568,description:"墨爾本最具代表性傳統市場。",dateDesc:"全年逢週三、五、六、日",highlights:"🛒 墨爾本最具代表性市場，超過150年歷史，本地人日常購物地
+🥩 肉類和海鮮攤位品質極高，價格比超市便宜30-40%
+🧀 熟食廳有各國美食攤位，早餐和午餐首選
+💡 週五和週六貨品最齊全，週三較少攤位
+⏰ 建議上午8-10時到場，最新鮮且人少",highlightsEn:"🛒 Melbourne's most iconic market with 150+ years of history — where locals actually shop
+🥩 Meat and seafood stalls are top quality and 30-40% cheaper than supermarkets
+🧀 The deli hall has food stalls from around the world — best for breakfast or lunch
+💡 Friday and Saturday have the most stalls; Wednesday is quieter
+⏰ Arrive 8-10am for freshest produce and smaller crowds"},
+  {id:23,name:"國家美術館（免費）",emoji:"🖼️",category:"展覽",color:"#06b6d4",months:[0,1,2,3,4,5,6,7,8,9,10,11],dayStart:1,dayEnd:31,daysOfWeek:[0,1,2,3,4,5,6],hours:"上午10:00 – 下午5:00",location:"NGV 國際館",address:"180 St Kilda Rd, Melbourne VIC 3006",venueLat:-37.8227,venueLng:144.9684,description:"澳洲參觀人數最多的美術館，永久館藏免費。",dateDesc:"全年每天，免費",highlights:"🖼️ 澳洲參觀人數最多的美術館，永久館藏完全免費
+💎 必看：莫內睡蓮、林布蘭特原作、澳洲原住民藝術館
+🌊 著名的水幕大門係打卡必備，記得感受水流過手的感覺
+☕ 館內餐廳有精緻午餐，價格合理視野極佳
+🎭 每週五夜場有特別活動，氣氛與白天截然不同",highlightsEn:"🖼️ Australia's most visited gallery — permanent collection is completely free
+💎 Must-sees: Monet's Water Lilies, Rembrandt originals, and the Indigenous art gallery
+🌊 The famous water wall entrance is iconic — feel the water running over your hands
+☕ The in-gallery restaurant offers a refined lunch with great views
+🎭 Friday night events transform the gallery into a completely different experience"},
+  {id:24,name:"南墨爾本市場",emoji:"🥦",category:"市集",color:"#84cc16",months:[0,1,2,3,4,5,6,7,8,9,10,11],dayStart:1,dayEnd:31,daysOfWeek:[3,5,6,0],hours:"上午8:00 – 下午4:00",location:"南墨爾本市場",address:"322 Coventry St, South Melbourne VIC 3205",venueLat:-37.8320,venueLng:144.9538,description:"深受本地人喜愛的社區市場。",dateDesc:"全年逢週三、五、六、日",highlights:"🥦 深受本地人喜愛的社區市場，觀光客較少，更真實的墨爾本生活
+🥐 必試：市場內的希臘麵包店，Spanakopita（菠菜批）全市最正宗
+☕ 角落的小型咖啡館係本地人早餐聚腳點，咖啡水準極高
+🐟 海鮮攤位種類豐富，週五最新鮮
+🧺 有機農產品攤位集中在北面，比一般攤位品質更高",highlightsEn:"🥦 Beloved local market with fewer tourists — a more authentic Melbourne experience
+🥐 Must try: the Greek bakery inside — their Spanakopita (spinach pie) is the best in Melbourne
+☕ The tucked-away café in the corner is a local breakfast institution with excellent coffee
+🐟 Seafood stalls are well-stocked — freshest on Fridays
+🧺 Organic produce stalls are clustered in the north section — higher quality than standard stalls"}
+], lastUpdated=LAST_UPDATED, expandedDay=0, currentWeek=[];
 
 // Init
 const today=new Date();
 document.getElementById("startDate").value=today.toISOString().slice(0,10);
 document.getElementById("startDate").addEventListener("change",()=>{if(document.getElementById("suburb").value.trim()&&currentWeek.length)renderWeek();updateTodayBtn();});
 updateTodayBtn();
-loadEvents();
-renderSupermarkets();
+// Show splash if no lang chosen, else load directly
+if(currentLang){
+  document.getElementById("langSplash").style.display="none";
+  applyLang(currentLang);
+  loadEvents();
+  renderSupermarkets();
+}
 
 // PWA Install
 let deferredPrompt=null;
@@ -184,22 +409,111 @@ function dismissInstall(){
 }
 
 // Service Worker
-if("serviceWorker" in navigator){
+if("serviceWorker" in navigator && location.hostname !== "www.claudeusercontent.com"){
   navigator.serviceWorker.register("/sw.js").then(()=>console.log("SW registered")).catch(console.error);
 }
 
+let currentLang=localStorage.getItem("melb_lang")||null;
+
+function chooseLang(lang){
+  currentLang=lang;
+  localStorage.setItem("melb_lang",lang);
+  document.getElementById("langSplash").style.display="none";
+  applyLang(lang);
+  loadEvents();
+  renderSupermarkets();
+}
+
+function setLang(lang){
+  currentLang=lang;
+  localStorage.setItem("melb_lang",lang);
+  applyLang(lang);
+  if(currentWeek.length) renderWeek();
+}
+
+function applyLang(lang){
+  document.getElementById("btnZH").classList.toggle("active",lang==="zh");
+  document.getElementById("btnEN").classList.toggle("active",lang==="en");
+  // Update static UI text
+  const isEn=lang==="en";
+  document.querySelector(".header p").textContent=isEn?"Auto-updated events · Supermarket deals · Sort by distance":"自動更新活動 · 超市特價 · 按距離排序";
+  document.querySelector("#tab-events .card label:first-child").textContent=isEn?"📍 Your suburb":"📍 你的地區";
+  document.getElementById("suburb").placeholder=isEn?"e.g. Clayton, Box Hill, Fitzroy...":"例如：Clayton、Box Hill、Fitzroy...";
+  document.querySelector(".btn-primary").textContent=isEn?"🔍 Search Events":"🔍 搜尋活動";
+  document.getElementById("todayBtn").textContent=isEn?"Today":"今天";
+}
+
 async function loadEvents(){
+  const badge=document.getElementById("lastUpdatedBadge");
+  const today=new Date().toISOString().slice(0,10);
+  const cacheKey="melb_events_v2_"+today;
+
+  // Check localStorage cache — same day, skip API call
   try{
-    const res=await fetch("/api/events");
-    const data=await res.json();
-    if(data.events&&data.events.length>0){
-      allEvents=data.events; lastUpdated=data.lastUpdated;
-      document.getElementById("lastUpdatedBadge").textContent=`自動更新：${lastUpdated||"最新"}`;
-    } else {
-      document.getElementById("lastUpdatedBadge").textContent="尚未更新，請執行 /api/update";
+    const cached=localStorage.getItem(cacheKey);
+    if(cached){
+      const data=JSON.parse(cached);
+      if(data.events&&data.events.length>0){
+        allEvents=data.events;
+        badge.textContent="已更新："+today;
+        return;
+      }
     }
-  } catch(e){
-    document.getElementById("lastUpdatedBadge").textContent="離線模式";
+  }catch(e){}
+
+  // No cache — call Claude API to fetch events + highlights in ONE call
+  badge.textContent="🔄 搜尋最新活動...";
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:6000,
+        messages:[{role:"user",content:`Today is ${today}. List 10-15 real Melbourne events happening this week and next 2 weeks. Reply ONLY with this JSON, no other text:
+{"events":[{
+  "id":1,
+  "name":"Event name in Chinese",
+  "nameEn":"Event name in English",
+  "emoji":"🎭",
+  "category":"類別",
+  "categoryEn":"Category in English",
+  "color":"#7c3aed",
+  "fixedStart":"YYYY-MM-DD",
+  "fixedEnd":"YYYY-MM-DD",
+  "daysOfWeek":[0,1,2,3,4,5,6],
+  "hours":"Opening hours",
+  "location":"Venue name",
+  "address":"Full address, Melbourne VIC XXXX",
+  "venueLat":-37.8136,
+  "venueLng":144.9631,
+  "description":"Chinese description",
+  "descriptionEn":"English description",
+  "dateDesc":"Chinese date description",
+  "dateDescEn":"English date description",
+  "price":"Cost or free",
+  "highlights":"IMPORTANT: Do NOT repeat the description. Write 4-5 specific insider tips in Traditional Chinese - what makes this event unique, hidden gems, best things to experience, practical tips (what to eat/see/buy/do), crowd tips. Each point on new line starting with different emoji. Be specific and useful.",
+  "highlightsEn":"IMPORTANT: Do NOT repeat the description. Write 4-5 specific insider tips in English - what makes this event unique, hidden gems, best things to experience, practical tips (what to eat/see/buy/do), crowd tips. Each point on new line starting with different emoji. Be specific and useful."
+}]}
+Include music, exhibitions, markets, food, festivals. daysOfWeek: 0=Sun,1=Mon...6=Sat.`}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content[0].text;
+    const clean=text.replace(/```json|```/g,"").trim();
+    const parsed=JSON.parse(clean);
+    if(parsed.events&&parsed.events.length>0){
+      allEvents=parsed.events;
+      badge.textContent="已更新："+today;
+      try{
+        localStorage.setItem(cacheKey, JSON.stringify(parsed));
+        Object.keys(localStorage).forEach(k=>{if(k.startsWith("melb_events_")&&k!==cacheKey)localStorage.removeItem(k);});
+      }catch(e){}
+    } else {
+      badge.textContent="活動資料："+LAST_UPDATED;
+    }
+  }catch(e){
+    badge.textContent="活動資料："+LAST_UPDATED;
   }
 }
 
@@ -217,10 +531,19 @@ function getDist(lat1,lng1,lat2,lng2){
 function isEventOn(ev,date){
   const dow=date.getDay();
   if(!ev.daysOfWeek||!ev.daysOfWeek.includes(dow)) return false;
-  const d=new Date(date); d.setHours(0,0,0,0);
-  const s=new Date(ev.fixedStart+"T00:00:00"); s.setHours(0,0,0,0);
-  const e=new Date(ev.fixedEnd+"T00:00:00"); e.setHours(0,0,0,0);
-  return d>=s&&d<=e;
+  if(ev.fixedStart){
+    const d=new Date(date); d.setHours(0,0,0,0);
+    const s=new Date(ev.fixedStart+"T00:00:00"); s.setHours(0,0,0,0);
+    const e=new Date(ev.fixedEnd+"T00:00:00"); e.setHours(0,0,0,0);
+    return d>=s&&d<=e;
+  }
+  const m=date.getMonth(),dy=date.getDate();
+  if(!ev.months||!ev.months.includes(m)) return false;
+  const sm=ev.months[0],em=ev.months[ev.months.length-1];
+  if(sm===em) return dy>=ev.dayStart&&dy<=ev.dayEnd;
+  if(m===sm) return dy>=ev.dayStart;
+  if(m===em) return dy<=ev.dayEnd;
+  return true;
 }
 function getDayLabel(date,i){if(i===0)return"今天";if(i===1)return"明天";return date.toLocaleDateString("zh-TW",{weekday:"long"});}
 function updateTodayBtn(){const v=document.getElementById("startDate").value;document.getElementById("todayBtn").style.display=v===new Date().toISOString().slice(0,10)?"none":"block";}
@@ -251,13 +574,116 @@ function renderWeek(){
     if(day.events.length===0){html+=`<div class="empty-day">😴 今天沒有活動</div>`;}
     else day.events.forEach((ev,ei)=>{
       const c=ev.color||"#7c3aed";
-      html+=`<div class="event-card" style="border:1px solid ${c}33;border-left:4px solid ${c};animation-delay:${ei*0.04}s"><div class="event-header"><div style="flex:1"><div class="event-badges"><span style="font-size:17px">${ev.emoji||"🎯"}</span><span class="cat-badge" style="color:${c};background:${c}22">${ev.category||"活動"}</span><span class="live-event-badge">🔴 自動更新</span></div><h3 class="event-name">${ev.name}</h3><p class="event-desc">${ev.description||""}</p><div class="date-badge"><span style="font-size:10px">📆</span><span style="font-size:10px;color:#cbd5e1">${ev.dateDesc||""}</span></div><div class="event-meta">${ev.hours?`<span>🕐 ${ev.hours}</span>`:""}${ev.location?`<span>📍 ${ev.location}</span>`:""}${ev.price?`<span>💰 ${ev.price}</span>`:""}</div></div><div class="dist-badge" style="background:${c}22;border:1px solid ${c}44"><div class="dist-num" style="color:${c}">${ev.distance}</div><div class="dist-unit">公里</div></div></div>${ev.address?`<a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(ev.address)}" target="_blank" class="directions-btn" style="background:${c}18;border:1px solid ${c}44;color:${c}">🗺️ 查看路線</a>`:""}</div>`;
+      html+=`<div class="event-card" style="border:1px solid ${c}33;border-left:4px solid ${c};animation-delay:${ei*0.04}s"><div class="event-header"><div style="flex:1"><div class="event-badges"><span style="font-size:17px">${ev.emoji||"🎯"}</span><span class="cat-badge" style="color:${c};background:${c}22">${ev.category||"活動"}</span><span class="live-event-badge">🔴 自動更新</span></div><h3 class="event-name">${ev.name}</h3><p class="event-desc">${ev.description||""}</p><div class="date-badge"><span style="font-size:10px">📆</span><span style="font-size:10px;color:#cbd5e1">${ev.dateDesc||""}</span></div><div class="event-meta">${ev.hours?`<span>🕐 ${ev.hours}</span>`:""}${ev.location?`<span>📍 ${ev.location}</span>`:""}${ev.price?`<span>💰 ${ev.price}</span>`:""}</div></div><div class="dist-badge" style="background:${c}22;border:1px solid ${c}44"><div class="dist-num" style="color:${c}">${ev.distance}</div><div class="dist-unit">公里</div></div></div><div style="display:flex;gap:8px;margin-top:9px">${ev.address?`<a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(ev.address)}" target="_blank" class="directions-btn" style="flex:1;background:${c}18;border:1px solid ${c}44;color:${c}">🗺️ 路線</a>`:""}<button onclick="showDetail(${ev.id})" style="flex:1;background:linear-gradient(135deg,${c}cc,${c}99);border:none;border-radius:7px;padding:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer">📋 詳細資料</button></div></div>`;
     });
     html+=`</div></div>`;
   });
   document.getElementById("results").innerHTML=html;
 }
 
+
+async function showDetail(id){
+  const ev=allEvents.find(e=>e.id===id); if(!ev) return;
+  const c=ev.color||"#7c3aed";
+  document.getElementById("modalEmoji").textContent=ev.emoji||"🎯";
+  document.getElementById("modalTitle").textContent=ev.name;
+  document.getElementById("modalCatBadge").innerHTML=`<span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${c};background:${c}22;padding:3px 10px;border-radius:20px">${ev.category||"活動"}</span>`;
+  document.getElementById("modalDate").textContent=ev.dateDesc||"";
+  document.getElementById("modalHours").textContent=ev.hours||"";
+  document.getElementById("modalHoursSection").style.display=ev.hours?"block":"none";
+  document.getElementById("modalLocation").textContent=(ev.location||"")+(ev.address?("\n"+ev.address):"");
+  if(ev.price){document.getElementById("modalPrice").textContent=ev.price;document.getElementById("modalPriceSection").style.display="block";}
+  else document.getElementById("modalPriceSection").style.display="none";
+  const mapUrl=ev.address?`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(ev.address)}`:`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.name+' Melbourne')}`;
+  document.getElementById("modalMapBtn").href=mapUrl;
+  document.getElementById("modalSheet").style.borderTop=`3px solid ${c}`;
+  const overlay=document.getElementById("modalOverlay");
+  overlay.style.display="flex";
+  document.body.style.overflow="hidden";
+
+  // Load photo using category-mapped Unsplash collections (working URLs)
+  const photoEl=document.getElementById("modalPhoto");
+  const skelEl=document.getElementById("modalPhotoSkeleton");
+  photoEl.style.display="none"; skelEl.style.display="block";
+  // Map category/keywords to specific working Unsplash photo IDs
+  const photoMap={
+    "藝術節":  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=400&fit=crop",
+    "音樂":    "https://images.unsplash.com/photo-1501612780327-45045538702b?w=800&h=400&fit=crop",
+    "市集":    "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=400&fit=crop",
+    "美食":    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=400&fit=crop",
+    "展覽":    "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&h=400&fit=crop",
+    "節慶":    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=400&fit=crop",
+    "家庭":    "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&h=400&fit=crop",
+    "表演":    "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&h=400&fit=crop",
+    "文化":    "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=800&h=400&fit=crop",
+    "體育":    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=400&fit=crop",
+  };
+  // Also check event name keywords
+  const nameMap={
+    "爵士": "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=800&h=400&fit=crop",
+    "燈光": "https://images.unsplash.com/photo-1545459720-aac8509eb02c?w=800&h=400&fit=crop",
+    "珠寶": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&h=400&fit=crop",
+    "魔術": "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&h=400&fit=crop",
+    "甜甜圈": "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&h=400&fit=crop",
+    "火鍋": "https://images.unsplash.com/photo-1534482421-64566f976cfa?w=800&h=400&fit=crop",
+    "夜市": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&h=400&fit=crop",
+    "圖書館": "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&h=400&fit=crop",
+    "博物館": "https://images.unsplash.com/photo-1566127992631-137a642a90f4?w=800&h=400&fit=crop",
+    "美術館": "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=800&h=400&fit=crop",
+    "植物園": "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&h=400&fit=crop",
+    "市場": "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&h=400&fit=crop",
+  };
+  let photoUrl = photoMap[ev.category] || "https://images.unsplash.com/photo-1514565131-fce0801e6785?w=800&h=400&fit=crop";
+  for(const [k,v] of Object.entries(nameMap)){ if(ev.name.includes(k)){photoUrl=v;break;} }
+  const img=new Image();
+  img.onload=()=>{photoEl.src=photoUrl;photoEl.style.display="block";skelEl.style.display="none";};
+  img.onerror=()=>{skelEl.style.display="none";};
+  img.src=photoUrl;
+
+  // Use pre-generated highlights from cache (no extra API call!)
+  const aiEl=document.getElementById("modalAIContent");
+  const aiSection=document.getElementById("modalAISection");
+  aiSection.style.borderColor="rgba(124,58,237,0.3)";
+  const hl = currentLang==="en" ? (ev.highlightsEn||ev.highlights) : (ev.highlights||ev.highlightsEn);
+  if(hl){
+    aiEl.textContent=hl;
+  } else {
+    // No cached highlights — generate on demand
+    aiEl.innerHTML=`<span style="color:#7c3aed;animation:pulse 1s infinite;display:inline-block">✨ 生成中...</span>`;
+    try{
+      const lang = currentLang==="en" ? "English" : "Traditional Chinese";
+      const r=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          model:"claude-sonnet-4-20250514",
+          max_tokens:500,
+          messages:[{role:"user",content:`You are a Melbourne local expert. Event: "${ev.name}" at ${ev.location}.
+Write 4-5 insider tips in ${lang}. RULES: Do NOT reuse any words from this description: "${ev.description}". Instead write SPECIFIC NEW info: unique atmosphere, what to order/see/buy, best time to arrive, what to wear, hidden gems, who it suits best. Each tip = 1 line, start with unique emoji, max 25 words per tip.`}]
+        })
+      });
+      const d=await r.json();
+      const tips=d.content[0].text;
+      aiEl.textContent=tips;
+      // Save to event for next time
+      if(currentLang==="en") ev.highlightsEn=tips; else ev.highlights=tips;
+    }catch(e){
+      aiEl.textContent="💡 "+ev.description;
+      aiSection.style.borderColor="rgba(255,255,255,0.09)";
+    }
+  }
+
+  // Also update other modal text for language
+  document.getElementById("modalDate").textContent = currentLang==="en" ? (ev.dateDescEn||ev.dateDesc||"") : (ev.dateDesc||"");
+  document.getElementById("modalLocation").textContent=(ev.location||"")+(ev.address?("\n"+ev.address):"");
+}
+function closeModalBtn(){
+  const overlay=document.getElementById("modalOverlay");
+  const sheet=document.getElementById("modalSheet");
+  overlay.classList.add("closing"); sheet.classList.add("closing");
+  setTimeout(()=>{overlay.style.display="none";overlay.classList.remove("closing");sheet.classList.remove("closing");document.body.style.overflow="";},220);
+}
+function closeModal(e){if(e.target===document.getElementById("modalOverlay"))closeModalBtn();}
 function toggleDay(di){expandedDay=expandedDay===di?null:di;renderWeek();}
 
 function renderSupermarkets(){
@@ -275,5 +701,46 @@ function switchTab(tab,btn){
   document.getElementById("tab-supermarket").style.display=tab==="supermarket"?"block":"none";
 }
 </script>
+
+<!-- Detail Modal -->
+<div id="modalOverlay" class="modal-overlay" style="display:none" onclick="closeModal(event)">
+  <div class="modal-sheet" id="modalSheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div>
+        <div id="modalEmoji" style="font-size:28px;margin-bottom:6px"></div>
+        <h2 class="modal-title" id="modalTitle"></h2>
+      </div>
+      <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    </div>
+    <div id="modalPhotoSkeleton" class="modal-photo-skeleton" style="display:none"></div>
+    <img id="modalPhoto" class="modal-photo" style="display:none" alt="活動圖片"/>
+    <div id="modalCatBadge" style="margin-bottom:14px"></div>
+
+    <!-- AI Highlights -->
+    <div class="modal-section" id="modalAISection" style="border-color:rgba(124,58,237,0.3)">
+      <div class="modal-label" style="color:#a78bfa">✨ 有咩特別 · 可以做咩</div>
+      <div id="modalAIContent" style="font-size:13px;color:#cbd5e1;line-height:1.8;white-space:pre-wrap"></div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-label">📆 日期</div>
+      <div class="modal-value" id="modalDate"></div>
+    </div>
+    <div class="modal-section" id="modalHoursSection">
+      <div class="modal-label">🕐 時間</div>
+      <div class="modal-value" id="modalHours"></div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-label">📍 地點</div>
+      <div class="modal-value" id="modalLocation"></div>
+    </div>
+    <div class="modal-section" id="modalPriceSection" style="display:none">
+      <div class="modal-label">💰 費用</div>
+      <div class="modal-value" id="modalPrice"></div>
+    </div>
+    <a id="modalMapBtn" href="#" target="_blank" class="modal-btn" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;margin-top:6px">🗺️ 查看路線 / Google Maps</a>
+  </div>
+</div>
 </body>
 </html>
