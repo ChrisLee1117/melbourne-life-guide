@@ -128,14 +128,6 @@
 <body>
 
 <!-- PWA Install Banner -->
-<!-- Language Splash -->
-<div id="langSplash">
-  <div style="font-size:48px;margin-bottom:20px">🇦🇺</div>
-  <div class="splash-title">Melbourne<br/>Life Guide</div>
-  <div class="splash-sub">墨爾本生活助手</div>
-  <button class="splash-btn splash-btn-zh" onclick="chooseLang('zh')">🇭🇰 繁體中文</button>
-  <button class="splash-btn splash-btn-en" onclick="chooseLang('en')">🇦🇺 English</button>
-</div>
 
 <div id="installBanner">
   <div class="install-icon">📱</div>
@@ -148,7 +140,7 @@
 </div>
 
 <div class="header" style="position:relative">
-  <div class="lang-toggle"><button class="lang-btn active" id="btnZH" onclick="setLang('zh')">中文</button><button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button></div>
+  
   <div style="font-size:11px;letter-spacing:4px;color:#7c3aed;font-weight:700;margin-bottom:5px;text-transform:uppercase">🇦🇺 墨爾本生活助手</div>
   <h1>Melbourne Life Guide</h1>
   <p>自動更新活動 · 超市特價 · 按距離排序</p>
@@ -413,7 +405,7 @@ if("serviceWorker" in navigator && location.hostname !== "www.claudeusercontent.
   navigator.serviceWorker.register("/sw.js").then(()=>console.log("SW registered")).catch(console.error);
 }
 
-let currentLang=localStorage.getItem("melb_lang")||null;
+let currentLang="bilingual";
 
 function chooseLang(lang){
   currentLang=lang;
@@ -464,7 +456,7 @@ async function loadEvents(){
   // No cache — call Claude API to fetch events + highlights in ONE call
   badge.textContent="🔄 搜尋最新活動...";
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{
+    const res=await fetch("/api/claude",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
@@ -586,8 +578,8 @@ async function showDetail(id){
   const ev=allEvents.find(e=>e.id===id); if(!ev) return;
   const c=ev.color||"#7c3aed";
   document.getElementById("modalEmoji").textContent=ev.emoji||"🎯";
-  document.getElementById("modalTitle").textContent=ev.name;
-  document.getElementById("modalCatBadge").innerHTML=`<span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${c};background:${c}22;padding:3px 10px;border-radius:20px">${ev.category||"活動"}</span>`;
+  document.getElementById("modalTitle").innerHTML=(ev.nameEn||ev.name)+(ev.nameEn&&ev.name?'<div style="font-size:14px;font-weight:500;opacity:0.6;margin-top:3px">'+ev.name+'</div>':"");
+  document.getElementById("modalCatBadge").innerHTML=`<span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${c};background:${c}22;padding:3px 10px;border-radius:20px">${ev.categoryEn||ev.category||"Event"}${ev.categoryEn&&ev.category?" · "+ev.category:""}</span>`;
   document.getElementById("modalDate").textContent=ev.dateDesc||"";
   document.getElementById("modalHours").textContent=ev.hours||"";
   document.getElementById("modalHoursSection").style.display=ev.hours?"block":"none";
@@ -644,15 +636,20 @@ async function showDetail(id){
   const aiEl=document.getElementById("modalAIContent");
   const aiSection=document.getElementById("modalAISection");
   aiSection.style.borderColor="rgba(124,58,237,0.3)";
-  const hl = currentLang==="en" ? (ev.highlightsEn||ev.highlights) : (ev.highlights||ev.highlightsEn);
-  if(hl){
-    aiEl.textContent=hl;
+  const hlZH = ev.highlights||"";
+  const hlEN = ev.highlightsEn||"";
+  if(hlZH||hlEN){
+    let combined="";
+    if(hlEN) combined+=hlEN;
+    if(hlZH&&hlEN) combined+="\n\n";
+    if(hlZH) combined+=hlZH;
+    aiEl.textContent=combined;
   } else {
     // No cached highlights — generate on demand
     aiEl.innerHTML=`<span style="color:#7c3aed;animation:pulse 1s infinite;display:inline-block">✨ 生成中...</span>`;
     try{
       const lang = currentLang==="en" ? "English" : "Traditional Chinese";
-      const r=await fetch("https://api.anthropic.com/v1/messages",{
+      const r=await fetch("/api/claude",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
@@ -674,7 +671,7 @@ Write 4-5 insider tips in ${lang}. RULES: Do NOT reuse any words from this descr
   }
 
   // Also update other modal text for language
-  document.getElementById("modalDate").textContent = currentLang==="en" ? (ev.dateDescEn||ev.dateDesc||"") : (ev.dateDesc||"");
+  document.getElementById("modalDate").textContent = (ev.dateDescEn||ev.dateDesc||"")+(ev.dateDescEn&&ev.dateDesc?"\n"+ev.dateDesc:"");
   document.getElementById("modalLocation").textContent=(ev.location||"")+(ev.address?("\n"+ev.address):"");
 }
 function closeModalBtn(){
