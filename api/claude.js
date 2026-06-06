@@ -25,8 +25,7 @@ export default async function handler(req, res) {
           tools: [{ google_search: {} }],
           generationConfig: {
             maxOutputTokens: body.max_tokens || 4000,
-            temperature: 0.1,
-            responseMimeType: 'application/json'
+            temperature: 0.1
           }
         })
       }
@@ -43,32 +42,36 @@ export default async function handler(req, res) {
     const parts = data.candidates?.[0]?.content?.parts || [];
     let text = parts.map(p => p.text || '').join('');
 
-    // Clean up common JSON issues from Gemini
-    text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-    // Remove control characters
-    text = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+    // Strip markdown
+    text = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
 
-    // Try to parse and re-stringify to ensure valid JSON
-    try {
-      const parsed = JSON.parse(text);
-      text = JSON.stringify(parsed);
-    } catch(e) {
-      // If parse fails, try to extract JSON object
-      const start = text.indexOf('{');
-      const end = text.lastIndexOf('}');
-      if (start >= 0 && end >= 0) {
-        text = text.slice(start, end + 1);
-        // Try again after extraction
-        try {
-          const parsed = JSON.parse(text);
-          text = JSON.stringify(parsed);
-        } catch(e2) {
-          // Return raw text, let client handle it
-        }
-      }
+    // Extract JSON object
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start >= 0 && end >= 0) {
+      text = text.slice(start, end + 1);
     }
 
-    res.status(200).json({ content: [{ type: 'text', text: text }] });
+    // Parse and re-stringify server-side to ensure clean JSON
+    // This removes all control characters automatically
+    let cleaned;
+    try {
+      cleaned = JSON.parse(text);
+    } catch(e) {
+      // Aggressive clean: remove all chars below 0x20 except tab
+      text = text.split('').map(c => {
+        const code = c.charCodeAt(0);
+        if (code < 0x20 && code !== 0x09) return ' ';
+        return c;
+      }).join('');
+      cleaned = JSON.parse(text);
+    }
+
+    // Return clean re-stringified JSON
+    res.status(200).json({
+      content: [{ type: 'text', text: JSON.stringify(cleaned) }]
+    });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
