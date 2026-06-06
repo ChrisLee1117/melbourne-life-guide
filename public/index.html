@@ -1885,6 +1885,58 @@ function dismissInstall() {
   localStorage.setItem("installDismissed","1");
 }
 
+
+async function loadEvents() {
+  var badge = document.getElementById('lastUpdatedBadge');
+  var today = new Date().toISOString().slice(0,10);
+  var cacheKey = 'melb_events_gemini_' + today;
+
+  // Check cache
+  try {
+    var cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      var cdata = JSON.parse(cached);
+      if (cdata.events && cdata.events.length > 0) {
+        allEvents = cdata.events;
+        badge.textContent = '已更新：' + today;
+        return;
+      }
+    }
+  } catch(e) {}
+
+  badge.textContent = '🔄 搜尋最新活動...';
+  try {
+    var prompt = 'Today is ' + today + '. Search Google and find 10-15 REAL events in Melbourne Australia this week and next 2 weeks. Reply ONLY with valid JSON (no markdown): {"events":[{"id":1,"name":"中文名","nameEn":"English name","emoji":"🎭","category":"類別","color":"#7c3aed","fixedStart":"YYYY-MM-DD","fixedEnd":"YYYY-MM-DD","daysOfWeek":[0,1,2,3,4,5,6],"hours":"時間","location":"場地","address":"地址 Melbourne VIC XXXX","venueLat":-37.8136,"venueLng":144.9631,"description":"中文簡介","dateDesc":"中文日期","dateDescEn":"English date","highlights":"4-5個insider tips繁體中文每行emoji開頭","highlightsEn":"4-5 insider tips English each line emoji"}]}';
+
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ max_tokens: 6000, messages: [{ role: 'user', content: prompt }] })
+    });
+    var data = await res.json();
+    var text = data.content[0].text;
+    var jsonStart = text.indexOf('{');
+    var jsonEnd = text.lastIndexOf('}');
+    if (jsonStart >= 0 && jsonEnd >= 0) {
+      var parsed = JSON.parse(text.slice(jsonStart, jsonEnd+1));
+      if (parsed.events && parsed.events.length > 0) {
+        allEvents = parsed.events;
+        badge.textContent = '已更新：' + today;
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(parsed));
+          Object.keys(localStorage).forEach(function(k) {
+            if (k.startsWith('melb_events_') && k !== cacheKey) localStorage.removeItem(k);
+          });
+        } catch(e) {}
+        return;
+      }
+    }
+    badge.textContent = '活動資料：2026年6月';
+  } catch(e) {
+    console.error('loadEvents error:', e);
+    badge.textContent = '活動資料：2026年6月';
+  }
+}
 // Init
 var todayStr = new Date().toISOString().slice(0,10);
 document.getElementById("startDate").value = todayStr;
@@ -1893,8 +1945,9 @@ document.getElementById("startDate").addEventListener("change", function() {
   if (document.getElementById("suburb").value.trim() && currentWeek.length) renderWeek();
 });
 updateTodayBtn();
-document.getElementById("lastUpdatedBadge").textContent = "活動資料：2026年6月";
+
 renderSupermarkets();
+loadEvents();
 
 // PWA
 var deferredPrompt = null;
