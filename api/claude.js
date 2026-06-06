@@ -25,7 +25,8 @@ export default async function handler(req, res) {
           tools: [{ google_search: {} }],
           generationConfig: {
             maxOutputTokens: body.max_tokens || 4000,
-            temperature: 0.1
+            temperature: 0.1,
+            responseMimeType: 'application/json'
           }
         })
       }
@@ -42,35 +43,46 @@ export default async function handler(req, res) {
     const parts = data.candidates?.[0]?.content?.parts || [];
     let text = parts.map(p => p.text || '').join('');
 
-    // Strip markdown
+    // Strip markdown fences
     text = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
 
-    // Extract JSON object
+    // Extract outermost JSON object
     const start = text.indexOf('{');
     const end = text.lastIndexOf('}');
-    if (start >= 0 && end >= 0) {
-      text = text.slice(start, end + 1);
+    if (start < 0 || end < 0) {
+      return res.status(500).json({ error: 'No JSON found in response', raw: text.slice(0, 200) });
     }
+    text = text.slice(start, end + 1);
 
-    // Parse and re-stringify server-side to ensure clean JSON
-    // This removes all control characters automatically
-    let cleaned;
+    // Parse with Node.js (server-side) - if this fails, send error
+    let parsed;
     try {
-      cleaned = JSON.parse(text);
+      parsed = JSON.parse(text);
     } catch(e) {
-      // Aggressive clean: remove all chars below 0x20 except tab
-      text = text.split('').map(c => {
-        const code = c.charCodeAt(0);
-        if (code < 0x20 && code !== 0x09) return ' ';
-        return c;
-      }).join('');
-      cleaned = JSON.parse(text);
+      // Try fixing common issues: unescaped newlines in strings
+      const fixed = text
+        .replace(/[\r\n]+/g, ' ')  // replace newlines with spaces
+        .replace(/\t/g, ' ')        // replace tabs
+        .replace(/[\x00-\x1F\x7F]/g, ' '); // remove other control chars
+      parsed = JSON.parse(fixed);
     }
 
-    // Return clean re-stringified JSON
-    res.status(200).json({
-      content: [{ type: 'text', text: JSON.stringify(cleaned) }]
-    });
+    // Sanitize all string values to remove control chars
+    function sanitize(obj) {
+      if (typeof obj === 'string') {
+        return obj.replace(/[\x00-\x1F\x7F]/g, ' ').replace(/\s+/g, ' ').trim();
+      }
+      if (Array.isArray(obj)) return obj.map(sanitize);
+      if (obj && typeof obj === 'object') {
+        const out = {};
+        for (const k in obj) out[k] = sanitize(obj[k]);
+        return out;
+      }
+      return obj;
+    }
+
+    const clean = sanitize(parsed);
+    res.status(200).json({ content: [{ type: 'text', text: JSON.stringify(clean) }] });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
