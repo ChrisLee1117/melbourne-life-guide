@@ -10,30 +10,39 @@ export default async function handler(req, res) {
 
   try {
     const body = req.body;
-    // Convert Anthropic-style messages to Gemini format
     const messages = body.messages || [];
-    const prompt = messages.map(m => m.content).join('\n');
+    const prompt = messages.map(function(m) {
+      return typeof m.content === 'string' ? m.content : JSON.stringify(m.content);
+    }).join('\n');
 
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + apiKey,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
           tools: [{ google_search: {} }],
-          generationConfig: { maxOutputTokens: body.max_tokens || 4000 }
+          generationConfig: {
+            maxOutputTokens: body.max_tokens || 4000,
+            temperature: 0.3
+          }
         })
       }
     );
 
-    const data = await geminiRes.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!geminiRes.ok) {
+      const errText = await geminiRes.text();
+      return res.status(500).json({ error: 'Gemini API error: ' + errText.slice(0, 200) });
+    }
 
-    // Return in Anthropic-compatible format so frontend works unchanged
-    res.status(200).json({
-      content: [{ type: 'text', text: text }]
-    });
+    const data = await geminiRes.json();
+    if (data.error) return res.status(500).json({ error: data.error.message });
+
+    const parts = data.candidates?.[0]?.content?.parts || [];
+    const text = parts.map(function(p) { return p.text || ''; }).join('');
+
+    res.status(200).json({ content: [{ type: 'text', text: text }] });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
