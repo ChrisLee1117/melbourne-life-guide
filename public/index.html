@@ -90,6 +90,19 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.7);cursor:po
 .modal-photo{width:100%;height:180px;object-fit:cover;border-radius:14px;margin-bottom:14px}
 .modal-photo-skeleton{width:100%;height:180px;border-radius:14px;margin-bottom:14px;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+.deals-cat{font-size:10px;font-weight:700;letter-spacing:2px;color:#94a3b8;text-transform:uppercase;padding:16px 0 8px;margin-top:4px}
+.deal-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden}
+.deal-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--deal-color,#7c3aed)}
+.deal-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.deal-emoji{font-size:26px;flex-shrink:0}
+.deal-brand{font-size:15px;font-weight:800;color:#f1f5f9}
+.deal-tag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-left:auto}
+.deal-title{font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:4px}
+.deal-desc{font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:8px}
+.deal-how{background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 10px;font-size:11px;color:#c4b5fd;line-height:1.6}
+.deal-link{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;font-weight:700;color:var(--deal-color,#7c3aed);text-decoration:none}
+.deal-frequency{font-size:10px;color:#475569;margin-top:6px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -128,6 +141,10 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.7);cursor:po
   <button class="tab" onclick="switchTab('supermarket',this)">
     <div class="label">🛒 超市特價</div>
     <div class="sub">Woolies · Coles</div>
+  </button>
+  <button class="tab" onclick="switchTab('deals',this)">
+    <div class="label">🎁 著數</div>
+    <div class="sub">免費 · 優惠</div>
   </button>
 </div>
 
@@ -191,6 +208,15 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.7);cursor:po
     </div>
     <a id="modalMapBtn" href="#" target="_blank" class="modal-btn" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;margin-top:6px">🗺️ Google Maps 路線</a>
   </div>
+</div>
+
+<div id="tab-deals" class="content" style="display:none">
+  <div class="card" style="text-align:center;margin-bottom:16px">
+    <div style="font-size:24px;margin-bottom:6px">🎁</div>
+    <div style="font-size:14px;font-weight:700;color:#c4b5fd;margin-bottom:4px">墨爾本著數大全</div>
+    <div style="font-size:11px;color:#64748b;line-height:1.6">免費食物、步數獎勵、生日優惠、App著數</div>
+  </div>
+  <div id="dealsContent"></div>
 </div>
 
 <script>
@@ -1627,6 +1653,231 @@ function switchTab(tab, btn) {
   btn.classList.add("active");
   document.getElementById("tab-events").style.display = (tab === "events") ? "block" : "none";
   document.getElementById("tab-supermarket").style.display = (tab === "supermarket") ? "block" : "none";
+  document.getElementById("tab-deals").style.display = (tab === "deals") ? "block" : "none";
+}
+
+
+var DEALS = [
+  {
+    cat:"🚶 步數著數",
+    items:[
+      {
+        emoji:"🍦", brand:"Yo-Chi 凍乾乳酪", color:"#a855f7",
+        tag:"每週日", tagColor:"rgba(168,85,247,0.2)",
+        title:"行路換免費 Frozen Yoghurt！",
+        desc:"每逢週日下午2時前，show 你的步數截圖就可以享折扣！",
+        how:"✅ 下載 Yo-Chi App 免費登記 Chi Club\n🥇 25,000步 → 100% 免費（最高$15）\n🥈 10,000步 → 50% 折扣\n🥉 5,000步 → 25% 折扣\n📱 需要 Apple Health / Google Fit / Garmin 顯示當日步數",
+        freq:"每個週日，下午2時前有效",
+        link:"https://www.yo-chi.com.au/chi-club",
+        linkText:"下載 Yo-Chi App"
+      },
+      {
+        emoji:"💰", brand:"Sweatcoin", color:"#16a34a",
+        tag:"每天", tagColor:"rgba(22,163,74,0.2)",
+        title:"行路賺錢！步數換禮品卡",
+        desc:"免費App，記錄戶外步數，換算成 Sweatcoin 虛擬貨幣，可換禮品卡、健身課程或PayPal現金。",
+        how:"📱 下載 Sweatcoin App（免費）\n👟 只計算戶外步數\n💎 積分可換 Amazon/Airbnb 禮品卡\n🎯 每日可賺最多5個 Sweatcoin（免費版）",
+        freq:"每天自動累積",
+        link:"https://sweatco.in/",
+        linkText:"下載 Sweatcoin"
+      }
+    ]
+  },
+  {
+    cat:"🍔 快餐著數",
+    items:[
+      {
+        emoji:"🍟", brand:"McDonald's MyMacca's", color:"#f59e0b",
+        tag:"每天", tagColor:"rgba(245,158,11,0.2)",
+        title:"免費薯條 + 積分換食物",
+        desc:"MyMacca's App 每天更新著數，每$1消費賺100積分，可換免費食物！",
+        how:"📱 下載 MyMacca's App 免費登記\n🍟 逢週五免費 Medium 薯條（$1以上消費）\n🎂 生日月份：免費芝士漢堡/大薯條/聖代\n💯 1500積分 = 免費薯餅\n💯 6000積分 = 免費 Big Mac",
+        freq:"每天更新，週五薯條最抵",
+        link:"https://www.mcdonalds.com/au/en-au/download-app.html",
+        linkText:"下載 MyMacca's App"
+      },
+      {
+        emoji:"🍗", brand:"KFC Wicked Wednesday", color:"#dc2626",
+        tag:"每週三", tagColor:"rgba(220,38,38,0.2)",
+        title:"30件雞塊 $10！",
+        desc:"每逢週三 KFC App 限定 Wicked Wednesday 著數，超抵食！",
+        how:"📱 下載 KFC App\n🍗 30件雞塊只需 $10（每週三）\n🆓 6月全月：訂單$30以上免費外賣\n🎯 App 每天都有不同著數，記得check",
+        freq:"Wicked Wednesday 每週三限定",
+        link:"https://www.kfc.com.au/app",
+        linkText:"下載 KFC App"
+      },
+      {
+        emoji:"🥖", brand:"Subway", color:"#16a34a",
+        tag:"常設", tagColor:"rgba(22,163,74,0.2)",
+        title:"$10 Value Combo + 生日免費",
+        desc:"Subway App 推出 $10 Value Combo（6寸三文治+飲品+曲奇）。登記 Subway Rewards 生日月份有免費禮物！",
+        how:"📱 下載 Subway App 登記 Subway Rewards\n🎂 生日月份：免費三文治（視乎會員等級）\n💰 $10 Value Combo：6寸三文治 + 飲品 + 曲奇\n🏆 每次消費賺積分，累積換免費食物",
+        freq:"生日月份限定 / Combo 常設",
+        link:"https://www.subway.com/en-AU/menunutrition/menu/all",
+        linkText:"Subway App 著數"
+      },
+      {
+        emoji:"🐔", brand:"Oporto 免費餐", color:"#f97316",
+        tag:"6月10日", tagColor:"rgba(249,115,22,0.2)",
+        title:"免費Quarter Chicken + 薯條！",
+        desc:"Dia de Portugal 紀念日！Oporto 派發15,000份免費 Quarter Chicken & Chips！",
+        how:"📅 日期：2026年6月10日（週三）\n📱 下載 Oporto App 登記\n🐔 免費 Quarter Chicken + 薯條（限量15,000份）\n⏰ 先到先得，早一點去！",
+        freq:"2026年6月10日一次性",
+        link:"https://www.oporto.com.au/",
+        linkText:"Oporto 官網"
+      }
+    ]
+  },
+  {
+    cat:"🎂 生日免費著數",
+    items:[
+      {
+        emoji:"☕", brand:"Starbucks 生日", color:"#16a34a",
+        tag:"生日當月", tagColor:"rgba(22,163,74,0.2)",
+        title:"免費任何飲品或食物！",
+        desc:"Starbucks Rewards 會員生日月份可換任何飲品或食物，無需消費！",
+        how:"📱 下載 Starbucks App 登記 Rewards\n🎂 生日月份：1個免費飲品或食物（任何尺寸）\n⭐ 每$1消費賺1星，可升級換更多著數\n💡 提前至少7天登記生日",
+        freq:"每年生日月份一次",
+        link:"https://www.starbucks.com.au/rewards",
+        linkText:"Starbucks Rewards"
+      },
+      {
+        emoji:"🍩", brand:"Krispy Kreme 生日", color:"#ec4899",
+        tag:"生日當日", tagColor:"rgba(236,72,153,0.2)",
+        title:"免費1打 Original Glazed 甜甜圈！",
+        desc:"Krispy Kreme Rewards 會員生日當日可獲免費1打（12個）Original Glazed 甜甜圈！",
+        how:"📱 下載 Krispy Kreme App 登記\n🍩 生日當日：免費12個 Original Glazed\n🎯 需提前登記生日\n💡 價值約 $22！",
+        freq:"每年生日當日",
+        link:"https://www.krispykreme.com.au/rewards",
+        linkText:"Krispy Kreme Rewards"
+      },
+      {
+        emoji:"🎬", brand:"Hoyts 生日", color:"#0ea5e9",
+        tag:"生日當月", tagColor:"rgba(14,165,233,0.2)",
+        title:"免費爆谷或飲品！",
+        desc:"Hoyts Rewards 會員生日月份有免費小爆谷或飲品，睇戲更抵！",
+        how:"📱 下載 Hoyts App 登記 Rewards\n🍿 生日月份：免費小爆谷或後台飲品\n🎟️ 每次買票賺積分，可換免費電影票\n💡 提前登記生日資料",
+        freq:"每年生日月份",
+        link:"https://www.hoyts.com.au/rewards",
+        linkText:"Hoyts Rewards"
+      },
+      {
+        emoji:"💄", brand:"Priceline Sister Club", color:"#ec4899",
+        tag:"生日當月", tagColor:"rgba(236,72,153,0.2)",
+        title:"免費生日禮物（Pink Diamond會員）",
+        desc:"Priceline Sister Club Pink Diamond 會員生日月份可獲免費禮物，通常係護膚品或化妝品！",
+        how:"🏪 到 Priceline 門市免費登記 Sister Club\n💎 升級至 Pink Diamond（消費$250）\n🎁 生日月份：免費禮物（價值約$20-30）\n✉️ 電郵會提前通知",
+        freq:"每年生日月份（Pink Diamond會員）",
+        link:"https://www.priceline.com.au/sister-club",
+        linkText:"Priceline Sister Club"
+      },
+      {
+        emoji:"🛒", brand:"IKEA Family 生日", color:"#f59e0b",
+        tag:"生日當月", tagColor:"rgba(245,158,11,0.2)",
+        title:"$10 off $50 消費！",
+        desc:"IKEA Family 會員生日月份可享 $10 off $50 或以上消費優惠！",
+        how:"📱 免費登記 IKEA Family 會員\n🎂 生日月份：$10 off $50消費\n🆓 IKEA Family 本身已有很多免費著數（免費咖啡、特價）\n💡 到店或網上消費均可",
+        freq:"每年生日月份",
+        link:"https://www.ikea.com/au/en/ikea-family/",
+        linkText:"IKEA Family 登記"
+      }
+    ]
+  },
+  {
+    cat:"🏃 免費運動",
+    items:[
+      {
+        emoji:"🏃", brand:"parkrun 免費5km跑步", color:"#16a34a",
+        tag:"每週六", tagColor:"rgba(22,163,74,0.2)",
+        title:"每週六早上8時，免費計時5km！",
+        desc:"全球最大免費跑步活動！墨爾本有數十個地點，包括 Albert Park、Princes Park、Main Yarra Trail 等。",
+        how:"🌐 登記一次，終身免費：parkrun.com.au\n📍 墨爾本地點：Albert Park、Princes Park、Maribyrnong River 等\n⏰ 每週六早上8:00準時開始\n🎽 帶備條碼（登記後下載），完成即有時間記錄",
+        freq:"每週六早上8時",
+        link:"https://www.parkrun.com.au/",
+        linkText:"登記 parkrun（免費）"
+      },
+      {
+        emoji:"🏃", brand:"Run the Tan（免費跑步會）", color:"#0ea5e9",
+        tag:"週末", tagColor:"rgba(14,165,233,0.2)",
+        title:"皇家植物園3.8km免費跑步！",
+        desc:"The Tan 係墨爾本最著名跑步路線，沿皇家植物園繞圈，週末有免費 Run Club 參加！",
+        how:"📍 集合：Royal Botanic Gardens 入口\n⏰ 週末早上（時間見官網）\n🆓 完全免費，無需登記\n💡 逆時針跑，Anderson Street 上坡係著名考驗",
+        freq:"週末（7月前有效）",
+        link:"https://www.runtheworld.com.au/",
+        linkText:"Run the Tan 詳情"
+      }
+    ]
+  },
+  {
+    cat:"🎮 其他著數",
+    items:[
+      {
+        emoji:"🎮", brand:"EB Games 生日", color:"#7c3aed",
+        tag:"生日當月", tagColor:"rgba(124,58,237,0.2)",
+        title:"$10-$20 生日優惠券！",
+        desc:"EB World 會員（Level 3-5）生日月份有 $10-$20 優惠券！遊戲迷必登記！",
+        how:"🏪 到 EB Games 門市免費登記 EB World\n🎮 升級至 Level 3（消費$100）可獲 $10 生日券\n🎮 Level 5（消費$300）可獲 $20 生日券\n🎁 全年都有會員限定著數",
+        freq:"每年生日月份",
+        link:"https://www.ebgames.com.au/eb-world",
+        linkText:"EB World 登記"
+      },
+      {
+        emoji:"🎬", brand:"免費 Walking Tour", color:"#64748b",
+        tag:"每天", tagColor:"rgba(100,116,139,0.2)",
+        title:"州立圖書館出發！免費導賞墨爾本市區",
+        desc:"每天從州立圖書館出發的免費 Walking Tour，本地導賞員帶你探索墨爾本秘密！",
+        how:"📍 集合：State Library of Victoria 門口\n⏰ 每天 10:30am 及 3:00pm 出發\n🆓 完全免費（可給小費）\n🗺️ 涵蓋 CBD、Laneways、街頭藝術等",
+        freq:"每天兩次",
+        link:"https://www.whatson.melbourne.vic.gov.au/",
+        linkText:"Melbourne 官方活動"
+      }
+    ]
+  }
+];
+
+function renderDeals() {
+  var el = document.getElementById("dealsContent");
+  if (!el) return;
+  var html = "";
+  // Check for today's special deals based on date
+  var today = new Date();
+  var month = today.getMonth()+1, day = today.getDate();
+  // National Donut Day - first Friday of June
+  if (month === 6 && day === 6) {
+    html += '<div style="background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(239,68,68,0.15));border:1px solid rgba(245,158,11,0.4);border-radius:16px;padding:16px;margin-bottom:16px"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#f59e0b;text-transform:uppercase;margin-bottom:8px">🔥 今日限定 Today Only</div><div style="font-size:20px;margin-bottom:6px">🍩 國際甜甜圈日 National Donut Day</div><div style="font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:10px">今日多間甜甜圈店免費送！Free donuts today!</div><div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px;margin-bottom:8px"><div style="font-size:12px;font-weight:700;color:#fbbf24;margin-bottom:4px">🍩 Krispy Kreme Australia</div><div style="font-size:11px;color:#e2e8f0;line-height:1.7">店內免費 Original Glazed 一個，無需消費！<br>In-store free Original Glazed, no purchase needed!<br>網上/Uber Eats/DoorDash 購任何產品送免費一個<br>另有一打只需 $14.90</div><a href="https://www.krispykreme.com.au" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:11px;font-weight:700;color:#f59e0b;text-decoration:none">→ Krispy Kreme 官網</a></div><div style="font-size:10px;color:#64748b">⏰ 今日限定，限量派發 / Today only, while stocks last</div></div>';
+  }
+  // Yo-Chi every Sunday
+  if (today.getDay() === 0) {
+    html += '<div style="background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(124,58,237,0.15));border:1px solid rgba(168,85,247,0.4);border-radius:16px;padding:14px;margin-bottom:16px"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#a855f7;text-transform:uppercase;margin-bottom:6px">🔥 今日限定 Today Only</div><div style="font-size:18px;margin-bottom:6px">🍦 Yo-Chi 今日步數著數！</div><div style="font-size:11px;color:#e2e8f0;line-height:1.8">🌟 25,000步 → 100% 免費（最高$15）<br>🥇 10,000步 → 50% 折扣<br>🥈 5,000步 → 25% 折扣<br>下午2時前到店，show Apple Health/Google Fit 步數</div><a href="https://www.yo-chi.com.au" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:11px;font-weight:700;color:#a855f7;text-decoration:none">→ Yo-Chi 官網</a></div>';
+  }
+  // KFC Wicked Wednesday
+  if (today.getDay() === 3) {
+    html += '<div style="background:linear-gradient(135deg,rgba(220,38,38,0.2),rgba(239,68,68,0.15));border:1px solid rgba(220,38,38,0.4);border-radius:16px;padding:14px;margin-bottom:16px"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#ef4444;text-transform:uppercase;margin-bottom:6px">🔥 今日限定 Wicked Wednesday</div><div style="font-size:18px;margin-bottom:6px">🍗 KFC 30件雞塊 $10！</div><div style="font-size:11px;color:#e2e8f0;line-height:1.8">每逢週三 KFC App 限定！<br>30 nuggets for $10 via KFC app today only</div><a href="https://www.kfc.com.au/app" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:11px;font-weight:700;color:#ef4444;text-decoration:none">→ 下載 KFC App</a></div>';
+  }
+  // McDonald's Free Fries Friday  
+  if (today.getDay() === 5) {
+    html += '<div style="background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(234,179,8,0.15));border:1px solid rgba(245,158,11,0.4);border-radius:16px;padding:14px;margin-bottom:16px"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#f59e0b;text-transform:uppercase;margin-bottom:6px">🔥 今日限定 Fries Friday</div><div style="font-size:18px;margin-bottom:6px">🍟 Macca\'s 免費 Medium 薯條！</div><div style="font-size:11px;color:#e2e8f0;line-height:1.8">每逢週五 MyMacca\'s App 限定！<br>$1以上消費即送免費 Medium 薯條<br>Free Medium Fries with $1+ purchase via app</div><a href="https://www.mcdonalds.com/au/en-au/download-app.html" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:11px;font-weight:700;color:#f59e0b;text-decoration:none">→ 下載 MyMacca\'s App</a></div>';
+  }
+  for (var i = 0; i < DEALS.length; i++) {
+    var cat = DEALS[i];
+    html += '<div class="deals-cat">' + cat.cat + '</div>';
+    for (var j = 0; j < cat.items.length; j++) {
+      var d = cat.items[j];
+      html += '<div class="deal-card" style="--deal-color:' + d.color + '">';
+      html += '<div class="deal-header">';
+      html += '<span class="deal-emoji">' + d.emoji + '</span>';
+      html += '<span class="deal-brand">' + d.brand + '</span>';
+      html += '<span class="deal-tag" style="color:' + d.color + ';background:' + d.tagColor + '">' + d.tag + '</span>';
+      html += '</div>';
+      html += '<div class="deal-title">' + d.title + '</div>';
+      html += '<div class="deal-desc">' + d.desc + '</div>';
+      html += '<div class="deal-how">' + d.how.replace(/\n/g, '<br>') + '</div>';
+      html += '<div class="deal-frequency">🕐 ' + d.freq + '</div>';
+      html += '<a href="' + d.link + '" target="_blank" class="deal-link" style="color:' + d.color + '">→ ' + d.linkText + '</a>';
+      html += '</div>';
+    }
+  }
+  el.innerHTML = html;
 }
 
 function dismissInstall() {
@@ -1662,6 +1913,7 @@ document.getElementById("installBtn").addEventListener("click", function() {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(function(){});
 }
+renderDeals();
 </script>
+
 </body>
-</html>
