@@ -5,104 +5,131 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>墨爾本生活助手</title>
 <link rel="manifest" href="/manifest.json"/>
-<meta name="theme-color" content="#02CCFE"/>
+<meta name="theme-color" content="#0ea5e9"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Melbourne"/>
 <link rel="apple-touch-icon" href="/icons/icon-192.png"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;background:linear-gradient(180deg,#e0f9ff 0%,#f0fdff 40%,#f8fffe 100%);font-family:'Segoe UI',system-ui,sans-serif;color:#1e3a5f;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-.header{background:linear-gradient(180deg,#02CCFE 0%,#00aadd 100%);padding:32px 20px 20px;text-align:center;border-bottom:none}
-.header h1{font-size:clamp(22px,5vw,36px);font-weight:900;color:#ffffff;-webkit-text-fill-color:#ffffff;line-height:1.1;letter-spacing:-0.5px;text-shadow:0 1px 8px rgba(0,0,0,0.15)}
-.header p{color:rgba(255,255,255,0.8);margin-top:6px;font-size:12px}
-.live-badge{display:inline-flex;align-items:center;gap:5px;margin-top:8px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:20px;padding:3px 10px}
-.live-dot{width:6px;height:6px;border-radius:50%;background:#ef4444;animation:pulse 1.5s infinite}
-.live-text{font-size:10px;color:#fca5a5;font-weight:600}
-#installBanner{display:none;background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(79,70,229,0.25));border-bottom:1px solid rgba(124,58,237,0.3);padding:12px 16px;align-items:center;gap:12px}
+body{min-height:100vh;min-height:100dvh;background:linear-gradient(180deg,#e0f7fa 0%,#b2ebf2 30%,#e0f2fe 70%,#f0f9ff 100%);font-family:'Segoe UI',system-ui,sans-serif;color:#0c4a6e;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+
+/* Header */
+.header{background:linear-gradient(135deg,#0ea5e9 0%,#06b6d4 50%,#0891b2 100%);padding:32px 20px 22px;text-align:center;border-bottom:none;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(6,182,212,0.3)}
+.header::before{content:'';position:absolute;top:-50%;left:-20%;width:140%;height:200%;background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,0.2) 0%,transparent 60%)}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#67e8f9,#38bdf8,#0ea5e9,#38bdf8,#67e8f9)}
+.header h1{font-size:clamp(22px,5vw,36px);font-weight:900;color:#ffffff;-webkit-text-fill-color:#ffffff;line-height:1.1;letter-spacing:-0.5px;text-shadow:0 2px 12px rgba(0,0,0,0.15)}
+.header p{color:rgba(255,255,255,0.85);margin-top:6px;font-size:12px;letter-spacing:0.5px}
+.live-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:20px;padding:4px 12px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 1.5s infinite}
+.live-text{font-size:10px;color:#fff;font-weight:600;letter-spacing:0.5px}
+
+/* Install banner */
+#installBanner{display:none;background:#e0f7fa;border-bottom:2px solid #b2ebf2;padding:12px 16px;align-items:center;gap:12px}
 .install-icon{font-size:28px;flex-shrink:0}
 .install-text{flex:1}
-.install-title{font-size:13px;font-weight:700;color:#02CCFE}
+.install-title{font-size:13px;font-weight:700;color:#0e7490}
 .install-sub{font-size:11px;color:#64748b;margin-top:2px}
-.install-btn{background:linear-gradient(135deg,#02CCFE,#00aadd);border:none;border-radius:8px;padding:8px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
-.close-btn{background:none;border:none;color:#475569;font-size:18px;cursor:pointer;padding:4px}
-.tabs{display:flex;background:#ffffff;border-bottom:2px solid #e2e8f0;position:sticky;top:0;z-index:10}
-.tab{flex:1;padding:12px 8px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s}
-.tab.active{background:#eff6ff;border-bottom-color:#02CCFE}
-.tab .label{font-size:14px;font-weight:700;color:#64748b}
-.tab.active .label{color:#02CCFE}
-.tab .sub{font-size:10px;color:#475569}
-.tab.active .sub{color:#02CCFE}
+.install-btn{background:linear-gradient(135deg,#0ea5e9,#0891b2);border:none;border-radius:8px;padding:8px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.close-btn{background:none;border:none;color:#94a3b8;font-size:18px;cursor:pointer;padding:4px}
+
+/* Tabs */
+.tabs{display:flex;background:#ffffff;border-bottom:2px solid #bae6fd;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(14,165,233,0.1)}
+.tab{flex:1;padding:12px 8px;background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all 0.2s}
+.tab.active{background:linear-gradient(180deg,#e0f7fa,#fff);border-bottom-color:#0ea5e9}
+.tab .label{font-size:14px;font-weight:700;color:#94a3b8}
+.tab.active .label{color:#0e7490}
+.tab .sub{font-size:10px;color:#cbd5e1}
+.tab.active .sub{color:#38bdf8}
+
+/* Content */
 .content{max-width:560px;margin:0 auto;padding:16px 14px 80px}
-.card{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
-label{font-size:10px;font-weight:700;letter-spacing:2px;color:#0099cc;text-transform:uppercase;display:block;margin-bottom:7px}
-input[type=text],input[type=date]{width:100%;background:#f0fdff;border:1px solid #b3f0fc;border-radius:11px;padding:11px 14px;color:#1e3a5f;font-size:15px;outline:none;margin-bottom:11px;-webkit-appearance:none}
+
+/* Cards */
+.card{background:#ffffff;border:1.5px solid #bae6fd;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(14,165,233,0.1)}
+label{font-size:10px;font-weight:700;letter-spacing:2px;color:#0e7490;text-transform:uppercase;display:block;margin-bottom:7px}
+input[type=text],input[type=date]{width:100%;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:12px;padding:12px 14px;color:#0c4a6e;font-size:15px;outline:none;margin-bottom:11px;-webkit-appearance:none;transition:border-color 0.2s}
+input:focus{border-color:#0ea5e9}
 input::placeholder{color:#94a3b8}
-input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.7);cursor:pointer}
-.btn-primary{width:100%;background:linear-gradient(135deg,#02CCFE,#00aadd);border:none;border-radius:11px;padding:13px;color:#ffffff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(2,204,254,0.35);-webkit-tap-highlight-color:transparent}
-.btn-today{background:#eff6ff;border:1px solid #b3f0fc;border-radius:10px;padding:10px 11px;color:#3b82f6;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
-.summary{background:#eff6ff;border:1px solid #b3f0fc;border-radius:13px;padding:12px 15px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.day-btn{width:100%;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:13px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all 0.2s;margin-bottom:7px;-webkit-tap-highlight-color:transparent}
-.day-btn.open{background:#eff6ff;border-color:#02CCFE}
-.day-label{font-size:15px;font-weight:800;color:#1e3a5f}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.4) sepia(1) saturate(3) hue-rotate(180deg);cursor:pointer}
+.btn-primary{width:100%;background:linear-gradient(135deg,#0ea5e9,#0891b2);border:none;border-radius:13px;padding:14px;color:#ffffff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(14,165,233,0.35);-webkit-tap-highlight-color:transparent;letter-spacing:0.3px;transition:transform 0.1s}
+.btn-primary:active{transform:scale(0.98)}
+.btn-today{background:#e0f7fa;border:1.5px solid #67e8f9;border-radius:10px;padding:10px 11px;color:#0e7490;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* Summary */
+.summary{background:linear-gradient(135deg,#e0f7fa,#f0f9ff);border:1.5px solid #7dd3fc;border-radius:16px;padding:14px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(14,165,233,0.12)}
+
+/* Day buttons */
+.day-btn{width:100%;background:#ffffff;border:1.5px solid #e2e8f0;border-radius:15px;padding:13px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all 0.2s;margin-bottom:8px;-webkit-tap-highlight-color:transparent;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.day-btn:hover{border-color:#7dd3fc}
+.day-btn.open{background:linear-gradient(135deg,#e0f7fa,#f0f9ff);border-color:#0ea5e9;box-shadow:0 2px 12px rgba(14,165,233,0.15)}
+.day-label{font-size:15px;font-weight:800;color:#0c4a6e}
 .day-label.today{color:#d97706}
-.day-label.tomorrow{color:#02CCFE}
-.day-date{font-size:11px;color:#64748b}
-.day-count{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:700;color:#475569}
-.day-count.has-events{background:#dbeafe;border-color:#3b82f6;color:#02CCFE}
+.day-label.tomorrow{color:#0e7490}
+.day-date{font-size:11px;color:#94a3b8}
+.day-count{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:700;color:#94a3b8}
+.day-count.has-events{background:#e0f7fa;border-color:#0ea5e9;color:#0e7490}
 .chevron{color:#94a3b8;font-size:13px;transition:transform 0.2s;display:inline-block}
 .chevron.open{transform:rotate(180deg)}
-.event-card{background:#ffffff;border-radius:16px;padding:16px;margin-bottom:10px;animation:fadeUp 0.3s ease both;box-shadow:0 2px 12px rgba(2,204,254,0.1)}
+
+/* Event cards */
+.event-card{background:#ffffff;border-radius:18px;padding:16px;margin-bottom:10px;animation:fadeUp 0.3s ease both;box-shadow:0 3px 14px rgba(14,165,233,0.1);border:1px solid rgba(186,230,253,0.6)}
 .event-header{display:flex;justify-content:space-between;align-items:flex-start;gap:9px}
-.event-badges{display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap}
-.cat-badge{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px}
-.event-name{margin:0 0 3px;font-size:15px;font-weight:800;color:#0c2340;line-height:1.3}
-.event-name-en{font-size:11px;font-weight:500;color:#5dd9fa;margin-bottom:5px;letter-spacing:0.2px}
-.event-desc{margin:0 0 6px;font-size:11px;color:#475569;line-height:1.6}
-.date-badge{display:inline-flex;align-items:center;gap:4px;background:#eff6ff;border:1px solid #b3f0fc;border-radius:7px;padding:3px 9px;margin-bottom:6px}
-.event-meta{display:flex;flex-direction:column;gap:2px}
-.event-meta span{font-size:11px;color:#475569}
-.dist-badge{text-align:center;border-radius:9px;padding:7px 9px;flex-shrink:0;min-width:48px}
+.event-badges{display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap}
+.cat-badge{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px}
+.event-name{margin:0 0 3px;font-size:16px;font-weight:800;color:#0c4a6e;line-height:1.3}
+.event-name-en{font-size:11px;font-weight:500;color:#38bdf8;margin-bottom:5px;letter-spacing:0.2px}
+.event-desc{margin:0 0 6px;font-size:11px;color:#64748b;line-height:1.6}
+.date-badge{display:inline-flex;align-items:center;gap:4px;background:#e0f7fa;border:1px solid #67e8f9;border-radius:7px;padding:3px 9px;margin-bottom:6px}
+.event-meta{display:flex;flex-direction:column;gap:3px}
+.event-meta span{font-size:11px;color:#64748b}
+.dist-badge{text-align:center;border-radius:12px;padding:8px 9px;flex-shrink:0;min-width:54px;background:linear-gradient(135deg,#e0f7fa,#f0f9ff);border:1.5px solid #7dd3fc}
 .dist-num{font-size:15px;font-weight:900}
 .dist-unit{font-size:8px;color:#94a3b8;font-weight:600}
-.directions-btn{display:block;border-radius:7px;padding:8px;text-decoration:none;font-size:11px;font-weight:700;text-align:center}
-.empty-day{background:#f0fdff;border:1px solid #e2e8f0;border-radius:11px;padding:18px;text-align:center;color:#475569;font-size:13px}
-.supermarket-card{border-radius:16px;padding:16px;margin-bottom:14px}
-.super-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.super-name{font-size:18px;font-weight:900;color:#1e3a5f}
-.super-tag{font-size:11px;color:#64748b}
-.super-link{display:flex;align-items:center;gap:10px;border-radius:10px;padding:11px 14px;text-decoration:none;transition:all 0.2s;margin-bottom:8px}
-.super-link .icon{font-size:18px}
-.super-link .text{font-size:14px;font-weight:600;color:#1e3a5f;flex:1}
-.info-box{background:#eff6ff;border:1px solid #b3f0fc;border-radius:12px;padding:14px;text-align:center;margin-top:6px}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,50,0.5);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s ease}
-.modal-overlay.closing{animation:fadeOut 0.2s ease forwards}
-.modal-sheet{background:linear-gradient(180deg,#ffffff 0%,#f0fdff 100%);border-radius:24px 24px 0 0;padding:20px 20px 40px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto;animation:slideUp 0.3s ease}
-.modal-sheet.closing{animation:slideDown 0.25s ease forwards}
-.modal-handle{width:40px;height:4px;background:#e2e8f0;border-radius:2px;margin:0 auto 18px}
-.modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:12px}
-.modal-close{background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;color:#475569;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.modal-title{font-size:20px;font-weight:900;color:#1e3a5f;line-height:1.2;margin:0}
-.modal-section{background:#f0fdff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:10px}
-.modal-label{font-size:9px;font-weight:700;letter-spacing:2px;color:#0099cc;text-transform:uppercase;margin-bottom:6px}
-.modal-value{font-size:13px;color:#475569;line-height:1.6;white-space:pre-wrap}
-.modal-btn{display:block;width:100%;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:10px;box-sizing:border-box}
-.modal-photo{width:100%;height:180px;object-fit:cover;border-radius:14px;margin-bottom:14px}
-.modal-photo-skeleton{width:100%;height:180px;border-radius:14px;margin-bottom:14px;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.directions-btn{display:block;border-radius:9px;padding:9px;text-decoration:none;font-size:11px;font-weight:700;text-align:center}
+.empty-day{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:13px;padding:20px;text-align:center;color:#94a3b8;font-size:13px}
 
-.deals-cat{font-size:10px;font-weight:700;letter-spacing:2px;color:#94a3b8;text-transform:uppercase;padding:16px 0 8px;margin-top:4px}
-.deal-card{background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden}
-.deal-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--deal-color,#3b82f6)}
+/* Supermarket */
+.supermarket-card{border-radius:18px;padding:16px;margin-bottom:14px}
+.super-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.super-name{font-size:18px;font-weight:900;color:#0c4a6e}
+.super-tag{font-size:11px;color:#64748b}
+.super-link{display:flex;align-items:center;gap:10px;border-radius:11px;padding:11px 14px;text-decoration:none;transition:all 0.2s;margin-bottom:8px}
+.super-link .icon{font-size:18px}
+.super-link .text{font-size:14px;font-weight:600;color:#0c4a6e;flex:1}
+.info-box{background:#e0f7fa;border:1.5px solid #67e8f9;border-radius:13px;padding:14px;text-align:center;margin-top:6px}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(12,74,110,0.6);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s ease;backdrop-filter:blur(4px)}
+.modal-overlay.closing{animation:fadeOut 0.2s ease forwards}
+.modal-sheet{background:linear-gradient(180deg,#ffffff 0%,#f0f9ff 100%);border-radius:28px 28px 0 0;padding:20px 20px 40px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;animation:slideUp 0.3s ease;box-shadow:0 -8px 40px rgba(14,165,233,0.2)}
+.modal-sheet.closing{animation:slideDown 0.25s ease forwards}
+.modal-handle{width:40px;height:4px;background:#bae6fd;border-radius:2px;margin:0 auto 18px}
+.modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:12px}
+.modal-close{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:50%;width:34px;height:34px;color:#0e7490;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.modal-title{font-size:20px;font-weight:900;color:#0c4a6e;line-height:1.2;margin:0}
+.modal-section{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:14px;padding:14px;margin-bottom:10px}
+.modal-label{font-size:9px;font-weight:700;letter-spacing:2px;color:#0e7490;text-transform:uppercase;margin-bottom:6px}
+.modal-value{font-size:13px;color:#334155;line-height:1.6;white-space:pre-wrap}
+.modal-btn{display:block;width:100%;border:none;border-radius:13px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:10px;box-sizing:border-box}
+.modal-photo{width:100%;height:180px;object-fit:cover;border-radius:16px;margin-bottom:14px}
+.modal-photo-skeleton{width:100%;height:180px;border-radius:16px;margin-bottom:14px;background:linear-gradient(90deg,#e0f7fa 25%,#b2ebf2 50%,#e0f7fa 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+
+/* Deals */
+.deals-cat{font-size:10px;font-weight:700;letter-spacing:2px;color:#0e7490;text-transform:uppercase;padding:16px 0 8px;margin-top:4px}
+.deal-card{background:#ffffff;border:1.5px solid #bae6fd;border-radius:18px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:0 3px 12px rgba(14,165,233,0.08)}
+.deal-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--deal-color,#0ea5e9)}
 .deal-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .deal-emoji{font-size:26px;flex-shrink:0}
-.deal-brand{font-size:15px;font-weight:800;color:#1e3a5f}
+.deal-brand{font-size:15px;font-weight:800;color:#0c4a6e}
 .deal-tag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-left:auto}
-.deal-title{font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:4px}
-.deal-desc{font-size:11px;color:#475569;line-height:1.6;margin-bottom:8px}
-.deal-how{background:#e0f9ff;border-radius:8px;padding:8px 10px;font-size:11px;color:#3b82f6;line-height:1.6}
-.deal-link{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;font-weight:700;color:var(--deal-color,#3b82f6);text-decoration:none}
-.deal-frequency{font-size:10px;color:#64748b;margin-top:6px}
+.deal-title{font-size:13px;font-weight:700;color:#0c4a6e;margin-bottom:4px}
+.deal-desc{font-size:11px;color:#64748b;line-height:1.6;margin-bottom:8px}
+.deal-how{background:#e0f7fa;border-radius:10px;padding:10px 12px;font-size:11px;color:#0e7490;line-height:1.7}
+.deal-link{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;font-weight:700;color:#0ea5e9;text-decoration:none}
+.deal-frequency{font-size:10px;color:#94a3b8;margin-top:6px}
+
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -186,7 +213,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.7);cursor:po
     <div id="modalPhotoSkeleton" class="modal-photo-skeleton" style="display:none"></div>
     <img id="modalPhoto" class="modal-photo" style="display:none" alt="活動圖片"/>
     <div id="modalCatBadge" style="margin-bottom:14px"></div>
-    <div class="modal-section" id="modalHighlightSection" style="border-color:rgba(2,204,254,0.4)">
+    <div class="modal-section" id="modalHighlightSection" style="border-color:rgba(124,58,237,0.3)">
       <div class="modal-label" style="color:#3b82f6">✨ 有咩特別 · What to do</div>
       <div id="modalHighlights" class="modal-value"></div>
     </div>
@@ -206,7 +233,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.7);cursor:po
       <div class="modal-label">💰 費用 / Price</div>
       <div class="modal-value" id="modalPrice"></div>
     </div>
-    <a id="modalMapBtn" href="#" target="_blank" class="modal-btn" style="background:linear-gradient(135deg,#02CCFE,#00aadd);color:#fff;margin-top:6px">🗺️ Google Maps 路線</a>
+    <a id="modalMapBtn" href="#" target="_blank" class="modal-btn" style="background:linear-gradient(135deg,#3b82f6,#3b82f6);color:#fff;margin-top:6px">🗺️ Google Maps 路線</a>
   </div>
 </div>
 
@@ -283,14 +310,14 @@ var NAME_PHOTO_MAP = {
   "Book of":"https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&h=400&fit=crop"
 };
 
-var allEvents = [
+var FALLBACK_EVENTS = [
   {
     "id": 101,
     "name": "RISING 冬季藝術節",
     "nameEn": "RISING Winter Arts Festival",
     "emoji": "🎭",
     "category": "藝術節",
-    "color": "#02CCFE",
+    "color": "#0ea5e9",
     "fixedStart": "2026-05-27",
     "fixedEnd": "2026-06-08",
     "daysOfWeek": [
@@ -406,7 +433,7 @@ var allEvents = [
     "nameEn": "Lightscape at Royal Botanic Gardens",
     "emoji": "✨",
     "category": "家庭",
-    "color": "#02CCFE",
+    "color": "#0ea5e9",
     "fixedStart": "2026-06-12",
     "fixedEnd": "2026-08-02",
     "daysOfWeek": [
@@ -464,7 +491,7 @@ var allEvents = [
     "nameEn": "NGV Friday Nights × Cartier",
     "emoji": "🥂",
     "category": "展覽",
-    "color": "#02CCFE",
+    "color": "#0ea5e9",
     "fixedStart": "2026-06-12",
     "fixedEnd": "2026-10-02",
     "daysOfWeek": [
@@ -743,7 +770,7 @@ var allEvents = [
     "nameEn": "Bubble Planet Exhibition",
     "emoji": "🫧",
     "category": "家庭",
-    "color": "#06b6d4",
+    "color": "#0ea5e9",
     "fixedStart": "2026-05-01",
     "fixedEnd": "2026-06-29",
     "daysOfWeek": [
@@ -798,7 +825,7 @@ var allEvents = [
     "nameEn": "Melbourne Comic & Toy Fair — Reservoir",
     "emoji": "🃏",
     "category": "市集",
-    "color": "#02CCFE",
+    "color": "#0ea5e9",
     "fixedStart": "2026-06-14",
     "fixedEnd": "2026-06-14",
     "daysOfWeek": [
@@ -1015,7 +1042,7 @@ var allEvents = [
     "nameEn": "SIX the Musical",
     "emoji": "👑",
     "category": "表演",
-    "color": "#02CCFE",
+    "color": "#0ea5e9",
     "fixedStart": "2026-07-24",
     "fixedEnd": "2026-09-06",
     "daysOfWeek": [
@@ -1151,7 +1178,7 @@ var allEvents = [
     "nameEn": "Pride and Prejudice (sort of)",
     "emoji": "💃",
     "category": "表演",
-    "color": "#02CCFE",
+    "color": "#0ea5e9",
     "fixedStart": "2026-06-18",
     "fixedEnd": "2026-07-11",
     "daysOfWeek": [
@@ -1339,7 +1366,7 @@ var allEvents = [
     "nameEn": "NGV — Free Permanent Collection",
     "emoji": "🖼️",
     "category": "展覽",
-    "color": "#06b6d4",
+    "color": "#0ea5e9",
     "months": [
       0,
       1,
@@ -1525,7 +1552,7 @@ function renderWeek() {
     } else {
       for (var j = 0; j < day.events.length; j++) {
         var ev = day.events[j];
-        var c = ev.color || "#02CCFE";
+        var c = ev.color || "#0ea5e9";
         html += '<div class="event-card" style="border:1px solid ' + c + '33;border-left:4px solid ' + c + ';animation-delay:' + (j*0.04) + 's">';
         html += '<div class="event-header"><div style="flex:1">';
         html += '<div class="event-badges"><span style="font-size:17px">' + (ev.emoji||"🎯") + '</span><span class="cat-badge" style="color:' + c + ';background:' + c + '22">' + (ev.category||"活動") + '</span></div>';
@@ -1560,7 +1587,7 @@ function showDetail(id) {
     if (allEvents[i].id === id) { ev = allEvents[i]; break; }
   }
   if (!ev) return;
-  var c = ev.color || "#02CCFE";
+  var c = ev.color || "#0ea5e9";
 
   document.getElementById("modalEmoji").textContent = ev.emoji || "🎯";
   document.getElementById("modalTitle").innerHTML = ev.name + (ev.nameEn ? '<div style="font-size:13px;font-weight:500;opacity:0.6;margin-top:3px">' + ev.nameEn + '</div>' : "");
@@ -1662,7 +1689,7 @@ var DEALS = [
     cat:"🚶 步數著數",
     items:[
       {
-        emoji:"🍦", brand:"Yo-Chi 凍乾乳酪", color:"#02CCFE",
+        emoji:"🍦", brand:"Yo-Chi 凍乾乳酪", color:"#0ea5e9",
         tag:"每週日", tagColor:"rgba(168,85,247,0.2)",
         title:"行路換免費 Frozen Yoghurt！",
         desc:"每逢週日下午2時前，show 你的步數截圖就可以享折扣！",
@@ -1812,7 +1839,7 @@ var DEALS = [
     cat:"🎮 其他著數",
     items:[
       {
-        emoji:"🎮", brand:"EB Games 生日", color:"#02CCFE",
+        emoji:"🎮", brand:"EB Games 生日", color:"#0ea5e9",
         tag:"生日當月", tagColor:"rgba(124,58,237,0.2)",
         title:"$10-$20 生日優惠券！",
         desc:"EB World 會員（Level 3-5）生日月份有 $10-$20 優惠券！遊戲迷必登記！",
@@ -1848,7 +1875,7 @@ function renderDeals() {
   }
   // Yo-Chi every Sunday
   if (today.getDay() === 0) {
-    html += '<div style="background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(124,58,237,0.15));border:1px solid rgba(168,85,247,0.4);border-radius:16px;padding:14px;margin-bottom:16px"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#0099cc;text-transform:uppercase;margin-bottom:6px">🔥 今日限定 Today Only</div><div style="font-size:18px;margin-bottom:6px">🍦 Yo-Chi 今日步數著數！</div><div style="font-size:11px;color:#1e3a5f;line-height:1.8">🌟 25,000步 → 100% 免費（最高$15）<br>🥇 10,000步 → 50% 折扣<br>🥈 5,000步 → 25% 折扣<br>下午2時前到店，show Apple Health/Google Fit 步數</div><a href="https://www.yo-chi.com.au" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:11px;font-weight:700;color:#3b82f6;text-decoration:none">→ Yo-Chi 官網</a></div>';
+    html += '<div style="background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(124,58,237,0.15));border:1px solid rgba(168,85,247,0.4);border-radius:16px;padding:14px;margin-bottom:16px"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#3b82f6;text-transform:uppercase;margin-bottom:6px">🔥 今日限定 Today Only</div><div style="font-size:18px;margin-bottom:6px">🍦 Yo-Chi 今日步數著數！</div><div style="font-size:11px;color:#1e3a5f;line-height:1.8">🌟 25,000步 → 100% 免費（最高$15）<br>🥇 10,000步 → 50% 折扣<br>🥈 5,000步 → 25% 折扣<br>下午2時前到店，show Apple Health/Google Fit 步數</div><a href="https://www.yo-chi.com.au" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:11px;font-weight:700;color:#3b82f6;text-decoration:none">→ Yo-Chi 官網</a></div>';
   }
   // KFC Wicked Wednesday
   if (today.getDay() === 3) {
@@ -1906,7 +1933,7 @@ async function loadEvents() {
 
   badge.textContent = '🔄 搜尋最新活動...';
   try {
-    var prompt = 'Today is ' + today + '. Search Google and find 10-15 REAL events in Melbourne Australia this week and next 2 weeks. Reply ONLY with valid JSON (no markdown): {"events":[{"id":1,"name":"中文名","nameEn":"English name","emoji":"🎭","category":"類別","color":"#02CCFE","fixedStart":"YYYY-MM-DD","fixedEnd":"YYYY-MM-DD","daysOfWeek":[0,1,2,3,4,5,6],"hours":"時間","location":"場地","address":"地址 Melbourne VIC XXXX","venueLat":-37.8136,"venueLng":144.9631,"description":"中文簡介","dateDesc":"中文日期","dateDescEn":"English date","highlights":"4-5個insider tips繁體中文每行emoji開頭","highlightsEn":"4-5 insider tips English each line emoji"}]}';
+    var prompt = 'Today is ' + today + '. Search Google and find 10-15 REAL events in Melbourne Australia this week and next 2 weeks. Reply ONLY with valid JSON (no markdown): {"events":[{"id":1,"name":"中文名","nameEn":"English name","emoji":"🎭","category":"類別","color":"#0ea5e9","fixedStart":"YYYY-MM-DD","fixedEnd":"YYYY-MM-DD","daysOfWeek":[0,1,2,3,4,5,6],"hours":"時間","location":"場地","address":"地址 Melbourne VIC XXXX","venueLat":-37.8136,"venueLng":144.9631,"description":"中文簡介","dateDesc":"中文日期","dateDescEn":"English date","highlights":"4-5個insider tips繁體中文每行emoji開頭","highlightsEn":"4-5 insider tips English each line emoji"}]}';
 
     var res = await fetch('/api/claude', {
       method: 'POST',
@@ -1927,7 +1954,7 @@ async function loadEvents() {
       jsonStr = jsonStr.replace(/([^\\])\t/g, '$1\\t');
       var parsed = JSON.parse(jsonStr);
       if (parsed.events && parsed.events.length > 0) {
-        allEvents = parsed.events;
+        allEvents = parsed.events; // Gemini events only, no hardcoded mixing
         badge.textContent = '已更新：' + today;
         try {
           localStorage.setItem(cacheKey, JSON.stringify(parsed));
@@ -1938,10 +1965,13 @@ async function loadEvents() {
         return;
       }
     }
-    badge.textContent = '活動資料：2026年6月';
+    // Gemini failed - use hardcoded fallback events
+    allEvents = FALLBACK_EVENTS;
+    badge.textContent = '活動資料：2026年6月（離線）';
   } catch(e) {
     console.error('loadEvents error:', e);
-    badge.textContent = '活動資料：2026年6月';
+    allEvents = FALLBACK_EVENTS;
+    badge.textContent = '活動資料：2026年6月（離線）';
   }
 }
 // Init
